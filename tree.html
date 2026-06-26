@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Tree - Password Strategy Vulnerability Analysis</title>
+    <link rel="stylesheet" href="design.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo"><a href="index.html" style="text-decoration: none; color: inherit;">Password Strategy Analysis</a></div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="overview.html" class="nav-link">Overview</a></li>
+                <li><a href="methodology.html" class="nav-link">Methodology</a></li>
+                <li><a href="tree.html" class="nav-link">Decision Tree</a></li>
+                <li><a href="architecture.html" class="nav-link">System</a></li>
+                <li><a href="crack-tester.html" class="nav-link">Crack Tester</a></li>
+                <li><a href="features.html" class="nav-link">Features</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Decision Tree Section -->
+    <section id="tree" class="decision-tree">
+        <div class="container">
+            <h2 class="section-title">Decision Tree Classification Model</h2>
+            <div class="tree-visualization">
+                <div class="tree-node root">
+                    <div class="node-box">Password Input</div>
+                    <div class="branches">
+                        <div class="branch left-branch"></div>
+                        <div class="branch right-branch"></div>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-around; margin-top: 60px;">
+                    <div class="tree-node">
+                        <div class="node-box">Length < 8</div>
+                        <div class="node-result weak">⚠️ WEAK</div>
+                    </div>
+                    <div class="tree-node">
+                        <div class="node-box">Length ≥ 8</div>
+                        <div class="sub-check">Complexity Check</div>
+                        <div style="display: flex; justify-content: space-around; margin-top: 40px;">
+                            <div class="tree-node">
+                                <div class="node-box">Low Complexity</div>
+                                <div class="node-result moderate">⚡ MODERATE</div>
+                            </div>
+                            <div class="tree-node">
+                                <div class="node-box">High Complexity</div>
+                                <div class="node-result strong">✓ STRONG</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="test-button" onclick="location.href='index.html#tester'">Test Password Strength</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Password Strategy Vulnerability Research | Cybersecurity Thesis Project</p>
+            <p>Decision Tree-Based Supervised Classification of User Generated Passwords</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

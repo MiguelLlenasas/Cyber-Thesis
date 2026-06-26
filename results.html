@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results</title>
+    <link rel="stylesheet" href="design.css">
+    <style>
+        .results-page { padding: 3rem 0; color: white; }
+        .results-container { max-width: 800px; margin: 0 auto; display: grid; gap: 1.5rem; }
+        .card { background: rgba(15, 15, 30, 0.9); border: 1px solid #e94560; padding: 1.5rem; border-radius: 12px; }
+        .badge { display: inline-block; padding: 0.5rem 1rem; border-radius: 20px; font-weight: bold; margin-bottom: 10px; }
+        .rule-based { background: #e74c3c; }
+        .dictionary { background: #f1c40f; color: black; }
+        .brute-force { background: #2ecc71; }
+        .vector-box { background: #000; padding: 1rem; font-family: monospace; color: #00ff00; overflow-x: auto; }
+        .strategy-list { padding-left: 20px; }
+        .strategy-list li { margin-bottom: 8px; color: #6dd5ff; }
+        .dataset-info { font-size: 0.85rem; color: #aaa; border-top: 1px solid #444; padding-top: 10px; margin-top: 10px; }
+        
+        /* New custom styles for the tree and pipeline rendering boxes */
+        .diagram-box {
+            background: #0d0e15;
+            border: 1px solid #444;
+            padding: 1.2rem;
+            font-family: 'Courier New', Courier, monospace;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .tree-trace-color { color: #2ecc71; } /* Green accent for the live tree trace */
+        .pipeline-color { color: #3498db; }  /* Blue accent for the core system landscape */
+    </style>
+</head>
+<body>
+    <section class="results-page">
+        <div class="container">
+            <h2 class="section-title">Password Analysis Report</h2>
+            <div id="mainContent" class="results-container">
+                <div class="card"><h3>Loading...</h3></div>
+            </div>
+            <div style="text-align:center; margin-top: 2rem;">
+                <a href="crack-tester.html" class="enter-btn" style="text-decoration:none;">← Test Another</a>
+            </div>
+        </div>
+    </section>
+<script>
+    function render() {
+        const container = document.getElementById('mainContent');
+        const currentData = JSON.parse(sessionStorage.getItem('lastAnalysis'));
+        
+        let history = JSON.parse(sessionStorage.getItem('analysisHistory') || "[]");
+
+        if (!currentData) {
+            container.innerHTML = "<div class='card'>No analysis data found.</div>";
+            return;
+        }
+
+        if (history.length === 0 || history[history.length - 1].password !== currentData.password) {
+            history.push(currentData);
+            sessionStorage.setItem('analysisHistory', JSON.stringify(history));
+        }
+
+        // 🌟 Idinagdag sa extraction destructuring ang dalawang bagong variables mula sa API response mo
+        const { 
+            features, 
+            vulnerability, 
+            strategies, 
+            decision_path, 
+            dataset_count,
+            visual_decision_tree_trace
+        } = currentData;
+        
+        const prevData = history.length > 1 ? history[history.length - 2] : null;
+
+        let comparisonHTML = "";
+
+        if (prevData) {
+            let comparisonResult = "";
+            let comparisonColor = "#f1c40f";
+
+            const prevPoints = calculateStrengthPoints(prevData.features, prevData.vulnerability);
+            const currentPoints = calculateStrengthPoints(features, vulnerability);
+
+            if (currentPoints > prevPoints) {
+                comparisonResult = "✅ Current password is stronger than the previous password.";
+                comparisonColor = "#2ecc71";
+            } else if (currentPoints < prevPoints) {
+                comparisonResult = "⚠️ Previous password is stronger than the current password.";
+                comparisonColor = "#e74c3c";
+            } else {
+                comparisonResult = "ℹ️ Both passwords currently have similar strength.";
+                comparisonColor = "#f1c40f";
+            }
+
+            function calculateStrengthPoints(f, vulnerability) {
+                let points = 0;
+                points += f.length * 2;
+                points += f.character_class_count * 8;
+                if (vulnerability === "BRUTE-FORCE") points += 25;
+                if (vulnerability === "RULE-BASED") points += 10;
+                if (f.dictionary_present) points -= 10;
+                if (f.has_sequence) points -= 5;
+                if (f.has_repetition) points -= 5;
+                return points;
+            }
+
+            const reachedTarget = vulnerability === "BRUTE-FORCE" && features.length >= 12;
+
+            comparisonHTML = `
+                <div class="card" style="border: 2px solid ${comparisonColor}">
+                    <h3 style="color:${comparisonColor}">Classification Result</h3>
+                    <p>Previous: <strong>${prevData.vulnerability}</strong> (${prevData.password})</p>
+                    <p>Current: <strong>${vulnerability}</strong> (${currentData.password})</p>
+                    <hr style="border:0.5px solid #333; margin:10px 0;">
+                    <p style="font-size:0.95rem;">${comparisonResult}</p>
+                    <ul style="margin-top:15px; padding-left:20px; color:#6dd5ff;">
+                        ${features.length > prevData.features.length ? "<li>✅ Password length increased.</li>" : ""}
+                        ${features.has_uppercase && !prevData.features.has_uppercase ? "<li>✅ Added uppercase letters.</li>" : ""}
+                        ${features.has_symbol && !prevData.features.has_symbol ? "<li>✅ Added symbols.</li>" : ""}
+                        ${features.has_digit && !prevData.features.has_digit ? "<li>✅ Added numbers.</li>" : ""}
+                        ${!features.dictionary_present && prevData.features.dictionary_present ? "<li>✅ Reduced dictionary dependency.</li>" : ""}
+                    </ul>
+                    <hr style="border:0.5px solid #333; margin:10px 0;">
+                    <p style="font-size:0.9rem;">
+                        ${reachedTarget 
+                            ? "⭐ <strong>Target Reached:</strong> Your password is now classified under Complex Brute-Force resistance. This is the recommended stopping point." 
+                            : "🔄 Continue improving the password until it reaches strong Brute-Force resistance."}
+                    </p>
+                </div>
+            `;
+        }
+
+        // 3. Render Final UI Layout with Diagram Blocks Included
+        container.innerHTML = `
+            ${comparisonHTML}
+
+            <div class="card">
+                <h3>Cracking Strategy Vulnerability Result</h3>
+                <div class="badge ${vulnerability.toLowerCase().replace(' ', '-')}">${vulnerability}</div>
+                <p>Status: <strong>${vulnerability === "BRUTE-FORCE" ? "Favorable (Secure)" : "Unfavorable (Not Secure)"}</strong></p>
+            </div>
+
+            ${visual_decision_tree_trace ? `
+            <div class="card">
+                <h3 style="color: #2ecc71; margin-bottom: 10px;">Decision Tree Path Result</h3>
+                <p style="font-size: 0.85rem; color: #ccc; margin-bottom: 10px;">
+                    This real-time diagram demonstrates the exact logic path triggered inside the Decision Tree nodes:
+                </p>
+                <pre class="diagram-box tree-trace-color">${visual_decision_tree_trace}</pre>
+            </div>
+            ` : ''}
+
+
+            <div class="card">
+                <h3 style="color: #f1c40f;">CART Decision Flow (Text Explanation)</h3>
+                <div style="margin-top: 10px;">
+                    ${decision_path.map((step, i) => `
+                        <div style="margin-bottom: 15px; border-left: 3px solid #e94560; padding-left: 15px;">
+                            <small style="color: #888; text-transform: uppercase;">Node Action ${i+1}</small>
+                            <div style="color: #fff; font-size: 0.95rem;">${step}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="color: #e94560;">Recommendations</h3>
+                <ul class="strategy-list">
+                    ${strategies.map(s => `<li>${s}</li>`).join('')}
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>Feature Summary Result</h3>
+                <div class="vector-box">
+                    ${JSON.stringify(features, null, 2)}
+                </div>
+                <div class="dataset-info">
+                    <small>Verified against <strong>${dataset_count || 0}</strong> training samples.</small>
+                </div>
+            </div>
+        `;
+    }
+    document.addEventListener('DOMContentLoaded', render);
+</script>
+</body>
+</html>

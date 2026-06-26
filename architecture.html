@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Architecture - Password Strategy Vulnerability Analysis</title>
+    <link rel="stylesheet" href="design.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo"><a href="index.html" style="text-decoration: none; color: inherit;">Password Strategy Analysis</a></div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="overview.html" class="nav-link">Overview</a></li>
+                <li><a href="methodology.html" class="nav-link">Methodology</a></li>
+                <li><a href="tree.html" class="nav-link">Decision Tree</a></li>
+                <li><a href="architecture.html" class="nav-link">System</a></li>
+                <li><a href="crack-tester.html" class="nav-link">Crack Tester</a></li>
+                <li><a href="features.html" class="nav-link">Features</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- System Architecture Section -->
+    <section class="system-architecture" id="architecture">
+        <div class="container">
+            <h2 class="section-title">System Architecture & Process Flow</h2>
+            
+            <!-- Main Flow -->
+            <div class="flow-diagram">
+                <div class="flow-step">User Input</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Characteristics Extraction (CE)</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Tree-Based Classification (TBC)</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Output</div>
+            </div>
+
+            <!-- Key Clarifications -->
+            <div class="clarifications-box">
+                <h3>🔍 Key System Clarifications</h3>
+                <ul class="clarifications-list">
+                    <li><strong>Tree-Based Classification:</strong> Only used during classification phase, NOT during characteristic extraction</li>
+                    <li><strong>Data Privacy:</strong> Actual passwords are NOT stored; only extracted characteristics are retained</li>
+                    <li><strong>Vulnerability Scoring:</strong> We identify the most vulnerable attack vector from 3 methods (Rule-Based, Dictionary, Brute-Force)</li>
+                    <li><strong>Data Structure:</strong> Feature vectors stored as lists of dictionaries for machine learning</li>
+                    <li><strong>Tree Algorithm:</strong> CART (Classification and Regression Tree) used to train/build decision tree from feature vectors and labeled training data</li>
+                    <li><strong>Node Processing:</strong> Nodes are utilized during the Tree-Based Classification phase for decision making</li>
+                </ul>
+            </div>
+
+            <!-- Characteristics Extraction Features -->
+            <div class="ce-features">
+                <h3>Characteristics Extraction (CE) Features</h3>
+                <div class="features-columns">
+                    <div class="feature-column">
+                        <h4>Basic Metrics</h4>
+                        <ul>
+                            <li>Length (total number of characters)</li>
+                            <li>Lowercase presence (a-z)</li>
+                            <li>Uppercase presence (A-Z)</li>
+                            <li>Digit presence (0-9)</li>
+                            <li>Symbol presence (!@#$%^&*())</li>
+                            <li>Character type count</li>
+                        </ul>
+                    </div>
+                    <div class="feature-column">
+                        <h4>Pattern Analysis</h4>
+                        <ul>
+                            <li>Dictionary words detection</li>
+                            <li>Leetspeak substitution (a→@, o→0, i→1, e→3, s→$)</li>
+                            <li>Capitalization pattern</li>
+                            <li>Numeric suffix pattern (password1)</li>
+                            <li>Symbol prefix/suffix pattern (@password or password!)</li>
+                            <li>Sequential pattern (abc, 123)</li>
+                            <li>Repeated character pattern (paaassword)</li>
+                        </ul>
+                    </div>
+                    <div class="feature-column">
+                        <h4>Aggregated Metrics</h4>
+                        <ul>
+                            <li>Rule-based pattern flag</li>
+                            <li>Overall vulnerability indicators</li>
+                            <li>Feature vector generation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Characteristic Extraction Process -->
+            <div class="ce-process">
+                <h3>⚙️ Characteristic Extraction Process</h3>
+                
+                <div class="process-step full-width">
+                    <h4>1. Input & Dual Version Creation</h4>
+                    <p><strong>Example Input:</strong> P@ssw0rd2026!!</p>
+                    <div class="code-block">
+                        <p><span class="label">Original (OG):</span> P@ssw0rd2026!! (for length, character, pattern detection)</p>
+                        <p><span class="label">Normalized:</span> password2026!! (converted to lowercase, leetspeak replaced)</p>
+                    </div>
+                </div>
+
+                <div class="process-step full-width">
+                    <h4>2. Length Extraction</h4>
+                    <p>Count total characters in original password</p>
+                    <div class="code-block">
+                        <p>P@ssw0rd2026!! = <strong>14 characters</strong></p>
+                    </div>
+                </div>
+
+                <div class="process-step full-width">
+                    <h4>3. Character Type Scanning (Single Pass)</h4>
+                    <p>Iterate through each character to identify types present</p>
+                    <div class="code-block">
+                        <p>✓ has_lowercase = 1 (found: s, s, w, r, d)<br>
+                        ✓ has_uppercase = 1 (found: P)<br>
+                        ✓ has_digit = 1 (found: 0, 2, 0, 2, 6)<br>
+                        ✓ has_symbol = 1 (found: @, !)<br>
+                        <strong>Character Class Count = 4</strong></p>
+                    </div>
+                </div>
+
+                <div class="process-step full-width">
+                    <h4>4. Pattern Detection</h4>
+                    <div class="pattern-grid">
+                        <div class="pattern-item">
+                            <p><strong>Sequential:</strong> has_sequence = 0 ✗</p>
+                        </div>
+                        <div class="pattern-item">
+                            <p><strong>Repetition:</strong> has_repetition = 1 ✓ (0, 2, 6 might contain)</p>
+                        </div>
+                        <div class="pattern-item">
+                            <p><strong>Leetspeak:</strong> has_leetspeak = 1 ✓ (@ for a, 0 for o, 2 for z)</p>
+                        </div>
+                        <div class="pattern-item">
+                            <p><strong>Capitalization:</strong> common_capitalization = 1 ✓ (Capital P at start)</p>
+                        </div>
+                        <div class="pattern-item">
+                            <p><strong>Numeric Suffix:</strong> numeric_suffix = 1 ✓ (2026 at end)</p>
+                        </div>
+                        <div class="pattern-item">
+                            <p><strong>Symbol Affix:</strong> symbol_affix = 1 ✓ (@ at start, !! at end)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="process-step full-width">
+                    <h4>5. Dictionary Detection (Using Normalized Version)</h4>
+                    <p>Slide a window of 4+ characters against dictionary list</p>
+                    <div class="code-block">
+                        <p><strong>Normalized:</strong> password2026!!<br>
+                        Found: "password" in dictionary<br>
+                        <strong>dictionary_present = 1 ✓</strong></p>
+                    </div>
+                </div>
+
+                <div class="process-step full-width">
+                    <h4>6. Rule-Based Pattern Aggregation</h4>
+                    <p>If ANY of these are true → rule_pattern_present = 1</p>
+                    <ul style="display: inline-block;">
+                        <li>✓ Leetspeak present</li>
+                        <li>✓ Common capitalization</li>
+                        <li>✓ Numeric suffix</li>
+                        <li>✓ Symbol affix</li>
+                        <li>✓ Sequences or repetition</li>
+                    </ul>
+                    <p><strong>Result: rule_pattern_present = 1 ✓</strong></p>
+                </div>
+
+                <div class="process-step full-width">
+                    <h4>7. Feature Vector Output</h4>
+                    <div class="code-block vector-output">
+                        <p>[<br>
+                        &nbsp;&nbsp;length = 14,<br>
+                        &nbsp;&nbsp;has_lowercase = 1,<br>
+                        &nbsp;&nbsp;has_uppercase = 1,<br>
+                        &nbsp;&nbsp;has_digit = 1,<br>
+                        &nbsp;&nbsp;has_symbol = 1,<br>
+                        &nbsp;&nbsp;character_class_count = 4,<br>
+                        &nbsp;&nbsp;dictionary_present = 1,<br>
+                        &nbsp;&nbsp;has_leetspeak = 1,<br>
+                        &nbsp;&nbsp;common_capitalization = 1,<br>
+                        &nbsp;&nbsp;numeric_suffix = 1,<br>
+                        &nbsp;&nbsp;symbol_affix = 1,<br>
+                        &nbsp;&nbsp;has_sequence = 0,<br>
+                        &nbsp;&nbsp;has_repetition = 1,<br>
+                        &nbsp;&nbsp;rule_pattern_present = 1<br>
+                        ]</p>
+                    </div>
+                </div>
+
+                <div class="process-step full-width important-note">
+                    <p><strong>⚠️ Data Privacy:</strong> Both password versions (OG and Normalized) are deleted after characteristic extraction due to Data Privacy Act compliance.</p>
+                </div>
+            </div>
+
+            <!-- Tree-Based Classification Phase -->
+            <div class="tbc-process">
+                <h3>🌳 Tree-Based Classification (TBC) Phase</h3>
+                <p>The feature vector enters the decision tree for classification based on CART algorithm-trained nodes.</p>
+                
+                <div class="tree-decision">
+                    <h4>Decision Tree Logic</h4>
+                    <div class="tree-text">
+                        <p><strong>Node 1:</strong> Dictionary present?</p>
+                        <div class="indent-1">
+                            <p><strong>YES →</strong> Go to Rule-Based or Dictionary path (check additional features)</p>
+                            <p><strong>NO →</strong> Check character class count</p>
+                        </div>
+                        
+                        <p style="margin-top: 1rem;"><strong>Node 2 (If No Dictionary):</strong> Character class count < 3?</p>
+                        <div class="indent-1">
+                            <p><strong>YES →</strong> Brute-Force vulnerability</p>
+                            <p><strong>NO →</strong> Check for sequences</p>
+                        </div>
+
+                        <p style="margin-top: 1rem;"><strong>Node 3 (If Char Class ≥ 3):</strong> Sequence present?</p>
+                        <div class="indent-1">
+                            <p><strong>YES →</strong> Rule-Based vulnerability</p>
+                            <p><strong>NO →</strong> Brute-Force vulnerability</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-walkthrough">
+                    <h4>Example: P@ssw0rd2026!!</h4>
+                    <div class="walkthrough-steps">
+                        <div class="step">
+                            <span class="step-num">1</span>
+                            <p><strong>Check:</strong> Dictionary present?</p>
+                            <p><span class="answer">YES</span> (contains "password")</p>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>
+                            <p><strong>Check:</strong> Has leetspeak?</p>
+                            <p><span class="answer">YES</span> (@ for a, 0 for o)</p>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>
+                            <p><strong>Check:</strong> Additional pattern checks...</p>
+                            <p><span class="answer">Multiple rule-based patterns detected</span></p>
+                        </div>
+                        <div class="step final">
+                            <span class="step-num">✓</span>
+                            <p><strong>Leaf Node Classification:</strong></p>
+                            <p><span class="result">RULE-BASED Attack Vulnerability</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vulnerability-explanation">
+                    <p><strong>Why RULE-BASED?</strong> The password contains dictionary substrings combined with predictable transformations (leetspeak), making it vulnerable to rule-based dictionary attacks that apply common transformation rules.</p>
+                </div>
+            </div>
+
+            <!-- Vulnerability Types -->
+            <div class="vulnerability-types">
+                <h3>⚔️ Three Vulnerability Classification Types</h3>
+                <div class="vuln-grid">
+                    <div class="vuln-card rule-based">
+                        <h4>Rule-Based Attack</h4>
+                        <p class="vuln-rank">🔴 Most Vulnerable</p>
+                        <p><strong>Characteristics:</strong> Dictionary words with predictable transformations</p>
+                        <ul>
+                            <li>Contains dictionary substrings</li>
+                            <li>Leetspeak substitutions detected</li>
+                            <li>Common capitalization patterns</li>
+                            <li>Numeric suffixes or symbol affixes</li>
+                        </ul>
+                        <p><strong>Attack Method:</strong> Dictionary attack combined with transformation rules (leetspeak converters, case variations)</p>
+                    </div>
+                    <div class="vuln-card dictionary">
+                        <h4>Dictionary Attack</h4>
+                        <p class="vuln-rank">🟠 Moderately Vulnerable</p>
+                        <p><strong>Characteristics:</strong> Contains existing dictionary words</p>
+                        <ul>
+                            <li>Password contains common words</li>
+                            <li>No complex transformations</li>
+                            <li>Basic structure</li>
+                        </ul>
+                        <p><strong>Attack Method:</strong> Direct dictionary lookup against common password lists</p>
+                    </div>
+                    <div class="vuln-card brute-force">
+                        <h4>Brute-Force Resistant</h4>
+                        <p class="vuln-rank">🟢 Most Resistant</p>
+                        <p><strong>Characteristics:</strong> No patterns, no sequences, no dictionary words</p>
+                        <ul>
+                            <li>Random character combinations</li>
+                            <li>High complexity</li>
+                            <li>No identifiable patterns</li>
+                        </ul>
+                        <p><strong>Attack Method:</strong> Requires exhaustive character-by-character guessing (computationally expensive)</p>
+                    </div>
+                </div>
+                <div class="note-box">
+                    <p><strong>📌 Note:</strong> Brute-Force is the MOST FAVORABLE for users (hardest to crack). Rule-Based is the LEAST FAVORABLE (easiest to crack). Dictionary falls in between.</p>
+                </div>
+            </div>
+
+            <!-- User Interfaces -->
+            <div class="user-interfaces">
+                <h3>👥 System User Interfaces</h3>
+                <div class="interface-grid">
+                    <div class="interface-card">
+                        <h4>👤 Regular User Interface</h4>
+                        <div class="interface-items">
+                            <p><strong>Input:</strong> Password input box</p>
+                            <p><strong>Processing:</strong> Characteristics Extraction</p>
+                            <p><strong>Output:</strong> Vulnerability Classification (Rule-Based / Dictionary / Brute-Force)</p>
+                            <p><strong>Ranking:</strong> Visual strength indicator</p>
+                        </div>
+                    </div>
+                    <div class="interface-card">
+                        <h4>🔐 Administrator (Cybersecurity) Interface</h4>
+                        <div class="interface-items">
+                            <p><strong>Input:</strong> Password input box</p>
+                            <p><strong>Processing:</strong> Full CE + TBC</p>
+                            <p><strong>Output:</strong> Complete Feature Vector</p>
+                            <p><strong>Usage:</strong> Testing, data collection, research, system training</p>
+                            <p><strong>Access:</strong> Full feature vector for model training and analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Password Strategy Vulnerability Research | Cybersecurity Thesis Project</p>
+            <p>Decision Tree-Based Supervised Classification of User Generated Passwords</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Consent | Password Strategy Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0b0f1a; /* Matching the deep dark blue in your images */
+            --bg-card: rgba(30, 41, 59, 0.5);
+            --accent-pink: #f43f5e;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --border-glow: rgba(244, 63, 94, 0.3);
+            --green-glow: rgba(34, 197, 94, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Subtle Gradient Background to match Image 2 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(244, 63, 94, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(30, 41, 59, 0.2) 0%, transparent 40%);
+            z-index: -1;
+        }
+
+        nav {
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: var(--accent-pink);
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-transform: capitalize;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        .accent-line {
+            width: 50px;
+            height: 3px;
+            background: var(--accent-pink);
+            margin: 0 auto 3rem auto;
+            border-radius: 10px;
+        }
+
+        /* The Card Styling */
+        .consent-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            padding: 3rem;
+            border-radius: 16px;
+            text-align: left;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        .consent-header {
+            color: #22c55e; /* Green matching the input box border in Image 1 */
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scroll-content {
+            height: 250px;
+            overflow-y: auto;
+            padding-right: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .scroll-content::-webkit-scrollbar { width: 4px; }
+        .scroll-content::-webkit-scrollbar-thumb { background: var(--accent-pink); border-radius: 10px; }
+
+        h3 { color: var(--text-main); margin-top: 1.5rem; }
+
+        .button-group {
+            margin-top: 3rem;
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 0.9rem 2.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-accept {
+            background: var(--accent-pink);
+            color: white;
+            box-shadow: 0 0 20px var(--border-glow);
+        }
+
+        .btn-accept:hover {
+            transform: scale(1.05);
+            background: #fb7185;
+        }
+
+        .btn-decline {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--text-muted);
+        }
+
+        .btn-decline:hover {
+            color: white;
+            border-color: white;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Password Strategy Vulnerability: Decision Tree-Based 
+            Supervised Classification of User Generated Password</div>
+    </nav>
+
+    <div class="container">
+        <h1>PRIVACY CONSENT</h1>
+        <div class="accent-line"></div>
+
+        <div class="consent-card">
+            <div class="consent-header">
+                <span>●</span> Security Research Protocol
+            </div>
+
+            <div class="scroll-content">
+                <p>Before proceeding with the <strong>Decision Tree-Based Classification</strong>, please acknowledge our data handling procedures:</p>
+                
+                <h3>Data Privacy</h3>
+                <p>We prioritize the anonymity of user-generated content. All passwords submitted for testing are processed locally and compared against trained models. No plain-text data is permanently stored on our servers.</p>
+
+                <h3>Research Integrity</h3>
+                <p>This system is part of a 2026 Cybersecurity Thesis Project. By clicking accept, you contribute to the validation of our supervised machine learning model designed to identify common attack vectors.</p>
+
+                <h3>Liability</h3>
+                <p>The "Crack Tester" provides vulnerability estimations based on pattern recognition. It should be used as a guideline, not an absolute guarantee of cryptographic strength.</p>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-accept" onclick="handleConsent(true)">I Consent</button>
+                <button class="btn btn-decline" onclick="handleConsent(false)">Decline</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        © 2026 Password Strategy Vulnerability Research | Cybersecurity Thesis Project
+    </footer>
+
+    <script>
+        function handleConsent(accepted) {
+            if(accepted) {
+                console.log("Consent Granted.");
+                // Redirect to your next page, e.g., location.href = 'tester.html';
+                window.location.href = 'crack-tester.html';
+            } else {
+                alert("Access to the analysis tool requires privacy consent.");
+            }
+        }
+    </script>
+</body>
+</html>
