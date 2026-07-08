@@ -163,7 +163,6 @@ function extractFeatures(password) {
 }
 
 // ===== 2. PASSWORD CLASSIFICATION =====
-// ===== 2. PASSWORD CLASSIFICATION =====
 function classifyPassword(extractedFeatures) {
     // 1. PURE DICTIONARY OVERRIDE (Shortcut bago mag-ML - mas pinahigpit)
     if (
@@ -209,14 +208,14 @@ function classifyPassword(extractedFeatures) {
 
     let finalLabel = labelMap[prediction[0]];
     let finalPath = [
-        "ML model analyzed the password features",
+        "Machine Learning model analyzed the password features",
         `Prediction: ${finalLabel}`
     ];
 
     // 4. POST-ML FALLBACK
     if (finalLabel === "DICTIONARY" && extractedFeatures.rule_pattern_present === 1) {
         finalLabel = "RULE-BASED";
-        finalPath.push("Post-ML Fallback: Corrected to RULE-BASED due to active rule patterns.");
+        finalPath.push("Post-Machine Learning Fallback: Corrected to RULE-BASED due to active rule patterns.");
     }
 
     return {
@@ -226,7 +225,6 @@ function classifyPassword(extractedFeatures) {
 }
 
 
-// ===== 3. REALISTIC SECURITY STRATEGIES & BREAKDOWN =====
 // ===== 3. DYNAMIC REALISTIC SECURITY STRATEGIES & BREAKDOWN =====
 function getStrategies(vulnerabilityType, extractedFeatures, password) {
     let tips = [];
