@@ -7,37 +7,29 @@
     <link rel="stylesheet" href="design.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body>
+<body class="crack-page">
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo"><a href="index.html" style="text-decoration: none; color: inherit;">Password Strategy Analysis</a></div>
+            
             <ul class="nav-menu">
-                <li><a href="index.html" class="nav-link">Home</a></li>
-                <li><a href="overview.html" class="nav-link">Overview</a></li>
-                <li><a href="methodology.html" class="nav-link">Methodology</a></li>
-                <li><a href="tree.html" class="nav-link">Decision Tree</a></li>
-                <li><a href="architecture.html" class="nav-link">System</a></li>
-                <li><a href="crack-tester.html" class="nav-link">Crack Tester</a></li>
-                <li><a href="features.html" class="nav-link">Features</a></li>
+                <li><a href="Home.html" class="nav-link">Home</a></li>
+                <li><a href="crack-tester.html" class="nav-link">Tester</a></li>
             </ul>
         </div>
     </nav>
 
     <!-- Password Tester Section -->
     <section class="password-tester" id="tester">
-        <div class="container">
-
-            <h2 class="section-title">
-                Interactive Password Strength Tester
-            </h2>
+        <div class="tester-card">
+            <header class="hero-header">
+                <h1 class="hero-title">Password Strategy Vulnerability</h1>
+                <p class="hero-subtitle">Interactive Password Strength Tester</p>
+            </header>
 
             <div class="tester-layout">
                 <div class="tester-main">
-
                     <div class="tester-container">
-
-                        <!-- Password Input -->
                         <input
                             type="password"
                             id="passwordInput"
@@ -46,7 +38,6 @@
                             onkeyup="checkPassword()"
                         >
 
-                        <!-- Toggle Button -->
                         <button
                             id="toggleBtn"
                             class="toggle-btn"
@@ -54,40 +45,33 @@
                         >
                             <i class="fa-solid fa-eye"></i>
                         </button>
-
                     </div>
 
-                    <!-- Enter Button -->
                     <div class="tester-action-row">
-                        <button 
+                        <button
                             type="button"
                             id="enterBtn"
                             class="enter-btn"
                             onclick="goToResults()"
                         >
-                            Enter
+                            ENTER
                         </button>
                     </div>
-
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2026 Password Strategy Vulnerability Research | Cybersecurity Thesis Project</p>
-            <p>Decision Tree-Based Supervised Classification of User Generated Passwords</p>
-        </div>
-    </footer>
 
-    <script src="script.js">
 
-window.onload = function() {
-    sessionStorage.removeItem('analysisHistory'); 
-    console.log("History cleared for a fresh session.");
-};
+    <script>
+        // Security Gate: Kicks them back to consent page if they haven't agreed
+        if (sessionStorage.getItem("privacyConsentGranted") !== "true") {
+            window.location.href = './index.html';
+        }
     </script>
+
+    <script src="script.js"></script>
 </body>
 </html>
+

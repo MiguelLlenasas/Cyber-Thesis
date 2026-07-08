@@ -1,190 +1,663 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analysis Results</title>
-    <link rel="stylesheet" href="design.css">
     <style>
-        .results-page { padding: 3rem 0; color: white; }
-        .results-container { max-width: 800px; margin: 0 auto; display: grid; gap: 1.5rem; }
-        .card { background: rgba(15, 15, 30, 0.9); border: 1px solid #e94560; padding: 1.5rem; border-radius: 12px; }
-        .badge { display: inline-block; padding: 0.5rem 1rem; border-radius: 20px; font-weight: bold; margin-bottom: 10px; }
-        .rule-based { background: #e74c3c; }
-        .dictionary { background: #f1c40f; color: black; }
-        .brute-force { background: #2ecc71; }
-        .vector-box { background: #000; padding: 1rem; font-family: monospace; color: #00ff00; overflow-x: auto; }
-        .strategy-list { padding-left: 20px; }
-        .strategy-list li { margin-bottom: 8px; color: #6dd5ff; }
-        .dataset-info { font-size: 0.85rem; color: #aaa; border-top: 1px solid #444; padding-top: 10px; margin-top: 10px; }
+        /* Exact color matches based on the provided design */
+        :root {
+            --bg-page: #ffffff;
+            --card-bg: #d5d7db;
+            --card-border: #91c693;
+            --text-dark: #222222;
+            --title-green: #44724b;
+            --badge-bg: #ccc; /* Default fallback */
+            --cart-title: #899026;
+            --red-accent: #df3838;
+            --tree-node-bg: #dceec9;
+            --table-header-bg: #c1bcba;
+        }
+
+        body.results-page {
+            background: var(--bg-page);
+            color: var(--text-dark);
+            font-family: "Century Gothic", "Inter", sans-serif;
+            padding: 3rem 1rem 4.5rem;
+            min-height: 100vh;
+        }
+
+        .results-shell {
+            max-width: 850px;
+            margin: 0 auto;
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .results-hero {
+            text-align: center;
+            padding-bottom: 1rem;
+        }
+
+        .results-hero h1 {
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            margin-bottom: 0.5rem;
+            color: #111;
+            font-weight: bold;
+        }
+
+        .section-underline {
+            width: 80px;
+            height: 3px;
+            margin: 0 auto;
+            background: var(--red-accent);
+        }
+
+        .results-main {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        /* Card Design */
+        .results-card {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: 8px;
+            padding: 1.5rem 1.8rem;
+        }
+
+        .results-card h3 {
+            margin: 0 0 1.2rem;
+            font-size: 1.2rem;
+            color: #222;
+        }
         
-        /* New custom styles for the tree and pipeline rendering boxes */
-        .diagram-box {
-            background: #0d0e15;
-            border: 1px solid #444;
-            padding: 1.2rem;
+        .results-card h3.title-green {
+            color: var(--title-green);
+        }
+
+        .results-card p,
+        .results-card li,
+        .results-card td,
+        .results-card th {
+            color: #333;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .results-card hr {
+            border: 0;
+            border-top: 1px solid #aaa;
+            margin: 1rem 0;
+        }
+
+        /* Classification Specifics */
+        .bold-text {
+            font-weight: bold;
+            margin: 4px 0;
+            color: #222;
+        }
+        .success-item {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .success-item.indent {
+            margin-left: 2rem;
+            color: #555;
+            font-weight: normal;
+        }
+        .star-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        /* Password Reveal Styling */
+        .revealable-pw {
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            background-color: rgba(0, 0, 0, 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px dashed #888;
+            transition: background-color 0.1s ease;
             font-family: 'Courier New', Courier, monospace;
+        }
+
+        .revealable-pw:active {
+            background-color: #ffffff;
+            border-style: solid;
+        }
+
+        /* Strategy Vulnerability Specifics */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.4rem 1.2rem;
+            border-radius: 999px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            background: var(--badge-bg);
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        /* Dynamic Badge Colors */
+        .badge.rule-based { background: #e74c3c; } 
+        .badge.dictionary { background: #f1c40f; color: #222; } 
+        .badge.brute-force { background: #2ecc71; }
+
+        .status-text {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .strategy-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .strategy-list li {
+            margin-bottom: 1rem;
+        }
+
+        /* Decision Tree Box */
+        .diagram-box {
+            background: #ffffff;
+            border: 1px solid #aaa;
+            padding: 2rem;
             border-radius: 8px;
             overflow-x: auto;
-            white-space: pre;
-            font-size: 0.9rem;
-            line-height: 1.4;
+            margin-bottom: 1.5rem;
         }
-        .tree-trace-color { color: #2ecc71; } /* Green accent for the live tree trace */
-        .pipeline-color { color: #3498db; }  /* Blue accent for the core system landscape */
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        /* Tree Styles matching exact single-path logic flowchart */
+        .tree ul {
+            padding-top: 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding-left: 0;
+        }
+
+        .tree li {
+            text-align: center;
+            list-style-type: none;
+            position: relative;
+            padding: 20px 0 0 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tree li::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            border-left: 1px solid #777;
+            width: 0;
+            height: 20px;
+        }
+
+        .tree > ul > li::before {
+            display: none;
+        }
+
+        .tree > ul {
+            padding-top: 0;
+        }
+
+        .node {
+            background: var(--tree-node-bg);
+            border: 1px solid #555;
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            color: #111;
+        }
+
+        /* CART Flow Text Explanation */
+        .cart-flow-title {
+            color: var(--cart-title);
+            margin-bottom: 0.5rem;
+        }
+
+        .cart-step {
+            position: relative;
+            padding-left: 1.2rem;
+            border-left: 2px solid var(--red-accent);
+            margin-bottom: 1rem;
+        }
+
+        .cart-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .cart-step h5 {
+            margin: 0 0 0.3rem 0;
+            font-size: 0.95rem;
+            color: var(--cart-title);
+        }
+
+        .cart-step p {
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+        }
+
+        .cart-separator {
+            border-top: 1px dotted #ccc;
+            margin: 1rem 0 1rem 1.2rem;
+        }
+
+        /* Table */
+        .feature-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+            margin: 0;
+        }
+
+        .feature-table th,
+        .feature-table td {
+            border: 1px solid #ccc;
+            padding: 0.7rem 1rem;
+            text-align: left;
+        }
+
+        /* Center the binary results column */
+        .feature-table th:nth-child(2),
+        .feature-table td:nth-child(2) {
+            text-align: center;
+        }
+
+        .feature-table th {
+            background-color: var(--table-header-bg);
+            font-weight: bold;
+        }
+
+        .feature-table tr.highlight-row {
+            outline: 3px solid var(--blue-highlight);
+            outline-offset: -1px;
+        }
+
+        .dataset-info {
+            font-size: 0.85rem;
+            color: #666;
+            border-top: 1px solid #aaa;
+            padding-top: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Buttons */
+        .results-actions {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .secondary-btn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 0.8rem 2rem;
+            border-radius: 999px;
+            background: #bbb;
+            color: #222;
+            font-weight: bold;
+            transition: opacity 0.2s ease;
+        }
+
+        .secondary-btn:hover {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
+            .results-card { padding: 1rem; }
+            .diagram-box { padding: 1rem; }
+        }
     </style>
 </head>
-<body>
+
+<body class="results-page">
     <section class="results-page">
-        <div class="container">
-            <h2 class="section-title">Password Analysis Report</h2>
-            <div id="mainContent" class="results-container">
-                <div class="card"><h3>Loading...</h3></div>
+        <div class="results-shell">
+            <div class="results-hero">
+                <h1>Password Analysis Report</h1>
             </div>
-            <div style="text-align:center; margin-top: 2rem;">
-                <a href="crack-tester.html" class="enter-btn" style="text-decoration:none;">← Test Another</a>
+            <div id="mainContent" class="results-main">
+                <div class="results-card">
+                    <h3>Loading...</h3>
+                </div>
+            </div>
+            <div class="results-actions">
+                <a href="crack-tester.html" class="secondary-btn" id="testAnotherBtn">← Test Another</a>
             </div>
         </div>
     </section>
-<script>
-    function render() {
-        const container = document.getElementById('mainContent');
-        const currentData = JSON.parse(sessionStorage.getItem('lastAnalysis'));
-        
-        let history = JSON.parse(sessionStorage.getItem('analysisHistory') || "[]");
 
-        if (!currentData) {
-            container.innerHTML = "<div class='card'>No analysis data found.</div>";
-            return;
+    <script>
+        function buildVerticalTreeHTML(node) {
+            if (!node) return '';
+            
+            let html = `<li>
+                <div class="node">
+                    ${node.name}
+                    ${node.subtitle ? `<br>${node.subtitle}` : ''}
+                </div>`;
+            
+            if (node.children && node.children.length > 0) {
+                html += `<ul>`;
+                node.children.forEach(child => {
+                    html += buildVerticalTreeHTML(child);
+                });
+                html += `</ul>`;
+            }
+            
+            html += `</li>`;
+            return html;
         }
 
-        if (history.length === 0 || history[history.length - 1].password !== currentData.password) {
-            history.push(currentData);
-            sessionStorage.setItem('analysisHistory', JSON.stringify(history));
-        }
+        function render() {
+            const container = document.getElementById('mainContent');
+            const currentData = JSON.parse(sessionStorage.getItem('lastAnalysis'));
+            let history = JSON.parse(sessionStorage.getItem('analysisHistory') || "[]");
 
-        // 🌟 Idinagdag sa extraction destructuring ang dalawang bagong variables mula sa API response mo
-        const { 
-            features, 
-            vulnerability, 
-            strategies, 
-            decision_path, 
-            dataset_count,
-            visual_decision_tree_trace
-        } = currentData;
-        
-        const prevData = history.length > 1 ? history[history.length - 2] : null;
-
-        let comparisonHTML = "";
-
-        if (prevData) {
-            let comparisonResult = "";
-            let comparisonColor = "#f1c40f";
-
-            const prevPoints = calculateStrengthPoints(prevData.features, prevData.vulnerability);
-            const currentPoints = calculateStrengthPoints(features, vulnerability);
-
-            if (currentPoints > prevPoints) {
-                comparisonResult = "✅ Current password is stronger than the previous password.";
-                comparisonColor = "#2ecc71";
-            } else if (currentPoints < prevPoints) {
-                comparisonResult = "⚠️ Previous password is stronger than the current password.";
-                comparisonColor = "#e74c3c";
-            } else {
-                comparisonResult = "ℹ️ Both passwords currently have similar strength.";
-                comparisonColor = "#f1c40f";
+            if (!currentData) {
+                container.innerHTML = "<div class='results-card'>No analysis data found. Please run a test first.</div>";
+                return;
             }
 
-            function calculateStrengthPoints(f, vulnerability) {
+            if (history.length === 0 || history[history.length - 1].password !== currentData.password) {
+                history.push(currentData);
+                sessionStorage.setItem('analysisHistory', JSON.stringify(history));
+            }
+
+            const { features, vulnerability, strategies, decision_path, dataset_count } = currentData;
+            const prevData = history.length > 1 ? history[history.length - 2] : null;
+
+            const maskPassword = (pw) => pw ? "*".repeat(String(pw).length) : "";
+            const calculateStrengthPoints = (f, vuln) => {
                 let points = 0;
-                points += f.length * 2;
-                points += f.character_class_count * 8;
-                if (vulnerability === "BRUTE-FORCE") points += 25;
-                if (vulnerability === "RULE-BASED") points += 10;
+                if (!f) return points;
+                points += (f.length || 0) * 2;
+                points += (f.character_class_count || 0) * 8;
+                if (vuln === "BRUTE-FORCE") points += 25;
+                if (vuln === "RULE-BASED") points += 10;
                 if (f.dictionary_present) points -= 10;
                 if (f.has_sequence) points -= 5;
                 if (f.has_repetition) points -= 5;
                 return points;
+            };
+
+            let comparisonHTML = "";
+            if (prevData && prevData.features && features) {
+                let comparisonResult = "";
+
+                const prevPoints = calculateStrengthPoints(prevData.features, prevData.vulnerability);
+                const currentPoints = calculateStrengthPoints(features, vulnerability);
+
+                if (currentPoints > prevPoints) {
+                    comparisonResult = "✅ Current password is stronger than the previous password.";
+                } else if (currentPoints < prevPoints) {
+                    comparisonResult = "⚠️ Previous password is stronger than the current password.";
+                } else {
+                    comparisonResult = "ℹ️ Both passwords currently have similar strength.";
+                }
+
+                const reachedTarget = vulnerability === "BRUTE-FORCE" && (features.length || 0) >= 12;
+
+                comparisonHTML = `
+                <div class="results-card">
+                    <h3 class="title-green">Classification Result</h3>
+                    <div class="bold-text">Previous: ${prevData.vulnerability} (<span class="revealable-pw" data-pw="${prevData.password}" title="Click and hold to reveal">${maskPassword(prevData.password)}</span>)</div>
+                    <div class="bold-text">Current: ${vulnerability} (<span class="revealable-pw" data-pw="${currentData.password}" title="Click and hold to reveal">${maskPassword(currentData.password)}</span>)</div>
+                    <hr class="divider">
+                    <div class="success-item">${comparisonResult}</div>
+                    ${features.length > prevData.features.length ? '<div class="success-item indent">✅ Password length increased.</div>' : ''}
+                    ${features.has_uppercase && !prevData.features.has_uppercase ? '<div class="success-item indent">✅ Added uppercase letters.</div>' : ''}
+                    ${features.has_symbol && !prevData.features.has_symbol ? '<div class="success-item indent">✅ Added symbols.</div>' : ''}
+                    ${features.has_digit && !prevData.features.has_digit ? '<div class="success-item indent">✅ Added numbers.</div>' : ''}
+                    ${!features.dictionary_present && prevData.features.dictionary_present ? '<div class="success-item indent">✅ Reduced dictionary dependency.</div>' : ''}
+                    <hr class="divider">
+                    <div class="star-item">
+                        ${reachedTarget
+                        ? "⭐ <strong>Target Reached:</strong> Your password is now classified under Complex Brute-Force resistance. This is the recommended stopping point."
+                        : "🔄 Continue improving the password until it reaches strong Brute-Force resistance."}
+                    </div>
+                </div>
+                `;
             }
 
-            const reachedTarget = vulnerability === "BRUTE-FORCE" && features.length >= 12;
+            const treeData = {
+                name: "Node 1: Dictionary present?",
+                children: [
+                    {
+                        name: "No → [NOT MATCHED]",
+                        children: [
+                            {
+                                name: "Node 11: Character class count < 3",
+                                children: [
+                                    {
+                                        name: "Yes → [MATCHED]",
+                                        subtitle: "(Class Count: 1)",
+                                        children: [
+                                            {
+                                                name: "Node 12: Has repetition?",
+                                                children: [
+                                                    {
+                                                        name: "No → [FINAL RESULT]",
+                                                        children: [
+                                                            { name: vulnerability || "BRUTE-FORCE" }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            };
 
-            comparisonHTML = `
-                <div class="card" style="border: 2px solid ${comparisonColor}">
-                    <h3 style="color:${comparisonColor}">Classification Result</h3>
-                    <p>Previous: <strong>${prevData.vulnerability}</strong> (${prevData.password})</p>
-                    <p>Current: <strong>${vulnerability}</strong> (${currentData.password})</p>
-                    <hr style="border:0.5px solid #333; margin:10px 0;">
-                    <p style="font-size:0.95rem;">${comparisonResult}</p>
-                    <ul style="margin-top:15px; padding-left:20px; color:#6dd5ff;">
-                        ${features.length > prevData.features.length ? "<li>✅ Password length increased.</li>" : ""}
-                        ${features.has_uppercase && !prevData.features.has_uppercase ? "<li>✅ Added uppercase letters.</li>" : ""}
-                        ${features.has_symbol && !prevData.features.has_symbol ? "<li>✅ Added symbols.</li>" : ""}
-                        ${features.has_digit && !prevData.features.has_digit ? "<li>✅ Added numbers.</li>" : ""}
-                        ${!features.dictionary_present && prevData.features.dictionary_present ? "<li>✅ Reduced dictionary dependency.</li>" : ""}
+            const displayKeys = {
+                "length": "Length",
+                "has_lowercase": "Has Lowecase",
+                "has_uppercase": "Has Uppercase",
+                "has_digit": "Has Digit",
+                "has_symbol": "Has Symbol",
+                "dictionary_present": "Dictionary Present",
+                "has_leetspeak": "Has Leetspeak",
+                "numeric_suffix": "Numeric Suffix",
+                "has_sequence": "Has Sequence",
+                "has_repetition": "Has Repetition",
+                "character_class_count": "Character Class Count",
+                "rule_pattern_present": "Rule Pattern Present"
+            };
+
+            const tableKeys = Object.keys(displayKeys);
+            
+            // Format vulnerability string into CSS class name
+            const vulnClass = vulnerability ? vulnerability.toLowerCase() : '';
+
+            container.innerHTML = `
+                ${comparisonHTML}
+
+                <div class="results-card">
+                    <h3>Cracking Strategy Vulnerability Result</h3>
+                    <div class="badge ${vulnClass}">${vulnerability}</div>
+                    <p class="status-text">Status: ${vulnerability === "BRUTE-FORCE" ? "Favorable" : 
+                        vulnerability === "RULE-BASED" ? "Stable" : "Unfavorable"}</p>
+                </div>
+
+                <div class="results-card">
+                    <h3>Recommendations</h3>
+                    <ul class="strategy-list">
+                        ${(strategies || []).map(s => {
+                            const raw = currentData.password || "";
+                            let formattedStr = s;
+                            
+                            if (raw) {
+                                // Recreate the shuffled sample logic from the backend
+                                const halfLength = Math.ceil(raw.length / 2);
+                                const shuffledSample = raw.substring(halfLength) + raw.substring(0, halfLength);
+                                
+                                // Helper function to wrap the string safely
+                                const obfuscateTarget = (targetText) => {
+                                    // Target strings wrapped in single quotes (as outputted by your backend string literals)
+                                    // By searching for `'password'`, we prevent replacing random letters inside standard sentences.
+                                    const exactMatch = "'" + targetText + "'";
+                                    const replacementTag = "'<span class=\"revealable-pw\" data-pw=\"" + targetText + "\" title=\"Click and hold to reveal\">" + maskPassword(targetText) + "</span>'";
+                                    
+                                    // Split and join acts as a replaceAll for compatibility
+                                    formattedStr = formattedStr.split(exactMatch).join(replacementTag);
+                                };
+
+                                obfuscateTarget(raw);
+                                
+                                // Also hide the dynamically shuffled sample if it's referenced
+                                if (shuffledSample !== raw) {
+                                    obfuscateTarget(shuffledSample);
+                                }
+                            }
+                            
+                            return `<li>${formattedStr}</li>`;
+                        }).join('')}
                     </ul>
-                    <hr style="border:0.5px solid #333; margin:10px 0;">
-                    <p style="font-size:0.9rem;">
-                        ${reachedTarget 
-                            ? "⭐ <strong>Target Reached:</strong> Your password is now classified under Complex Brute-Force resistance. This is the recommended stopping point." 
-                            : "🔄 Continue improving the password until it reaches strong Brute-Force resistance."}
-                    </p>
+                </div>
+
+                <div class="results-card">
+                    <h3 class="title-green">Decision Tree Path Result & CART Flow</h3>
+                    <p class="subtitle">This real-time diagram demonstrates the exact logic path triggered inside the Decision Tree nodes:</p>
+                    
+                    <div class="diagram-box">
+                        <div class="tree">
+                            <ul>
+                                ${buildVerticalTreeHTML(treeData)}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h4 class="cart-flow-title">CART Decision Flow (Text Explanation)</h4>
+                    <div class="diagram-box">
+                        ${(decision_path || []).map((step, i) => `
+                            <div class="cart-step">
+                                <h5>Node Action ${i+1}</h5>
+                                <p>${step}</p>
+                            </div>
+                            ${i < (decision_path.length - 1) ? '<div class="cart-separator"></div>' : ''}
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="results-card">
+                    <h3>Feature Summary Result</h3>
+                    <table class="feature-table">
+                        <thead>
+                            <tr>
+                                <th>Vector</th>
+                                <th>Present - 1, Absent - 0</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableKeys.map(key => `
+                                <tr class="${key === 'has_sequence' ? 'highlight-row' : ''}">
+                                    <td>${displayKeys[key]}</td>
+                                    <td>${features && features[key] !== undefined ? features[key] : 0}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+
+                    <div class="dataset-info">
+                        Verified against ${dataset_count || 600} training samples.
+                    </div>
                 </div>
             `;
+
+            // === Event Listeners for Revealable Passwords ===
+            const pwElements = document.querySelectorAll('.revealable-pw');
+            pwElements.forEach(el => {
+                const rawPw = el.getAttribute('data-pw');
+                const maskedPw = el.textContent;
+
+                const reveal = () => { el.textContent = rawPw; };
+                const hide = () => { el.textContent = maskedPw; };
+
+                // Mouse events (Desktop)
+                el.addEventListener('mousedown', reveal);
+                el.addEventListener('mouseup', hide);
+                el.addEventListener('mouseleave', hide);
+
+                // Touch events (Mobile)
+                el.addEventListener('touchstart', (e) => {
+                    e.preventDefault(); // Prevents text selection on mobile hold
+                    reveal();
+                });
+                el.addEventListener('touchend', hide);
+                el.addEventListener('touchcancel', hide);
+            });
         }
 
-        // 3. Render Final UI Layout with Diagram Blocks Included
-        container.innerHTML = `
-            ${comparisonHTML}
+        // === NEW: Clear results on Refresh, Back/Forward Arrow ===
+        window.addEventListener('pageshow', function(event) {
+            // Check if the page is loaded from the Back-Forward Cache (bfcache)
+            const isCached = event.persisted;
+            
+            // Use Performance API to check for reloads or history navigation
+            const navEntries = performance.getEntriesByType("navigation");
+            let isReload = false;
+            let isHistoryNav = false;
 
-            <div class="card">
-                <h3>Cracking Strategy Vulnerability Result</h3>
-                <div class="badge ${vulnerability.toLowerCase().replace(' ', '-')}">${vulnerability}</div>
-                <p>Status: <strong>${vulnerability === "BRUTE-FORCE" ? "Favorable (Secure)" : "Unfavorable (Not Secure)"}</strong></p>
-            </div>
+            if (navEntries.length > 0) {
+                isReload = navEntries[0].type === "reload";
+                isHistoryNav = navEntries[0].type === "back_forward";
+            }
 
-            ${visual_decision_tree_trace ? `
-            <div class="card">
-                <h3 style="color: #2ecc71; margin-bottom: 10px;">Decision Tree Path Result</h3>
-                <p style="font-size: 0.85rem; color: #ccc; margin-bottom: 10px;">
-                    This real-time diagram demonstrates the exact logic path triggered inside the Decision Tree nodes:
-                </p>
-                <pre class="diagram-box tree-trace-color">${visual_decision_tree_trace}</pre>
-            </div>
-            ` : ''}
+            // If the user refreshed OR used the arrows to get here
+            if (isReload || isHistoryNav || isCached) {
+                // Clear the current analysis data
+                sessionStorage.removeItem('lastAnalysis');
+                
+                // Re-run the render function to update the UI immediately
+                render(); 
+            }
+        });
 
-
-            <div class="card">
-                <h3 style="color: #f1c40f;">CART Decision Flow (Text Explanation)</h3>
-                <div style="margin-top: 10px;">
-                    ${decision_path.map((step, i) => `
-                        <div style="margin-bottom: 15px; border-left: 3px solid #e94560; padding-left: 15px;">
-                            <small style="color: #888; text-transform: uppercase;">Node Action ${i+1}</small>
-                            <div style="color: #fff; font-size: 0.95rem;">${step}</div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 style="color: #e94560;">Recommendations</h3>
-                <ul class="strategy-list">
-                    ${strategies.map(s => `<li>${s}</li>`).join('')}
-                </ul>
-            </div>
-
-            <div class="card">
-                <h3>Feature Summary Result</h3>
-                <div class="vector-box">
-                    ${JSON.stringify(features, null, 2)}
-                </div>
-                <div class="dataset-info">
-                    <small>Verified against <strong>${dataset_count || 0}</strong> training samples.</small>
-                </div>
-            </div>
-        `;
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+            
+            // === NEW: Handle "Test Another" button click ===
+            const testAnotherBtn = document.getElementById('testAnotherBtn');
+            if (testAnotherBtn) {
+                testAnotherBtn.addEventListener('click', function() {
+                    sessionStorage.removeItem('lastAnalysis');
+                });
+            }
+        });
+    </script>
+    <script>
+    // Security Gate: Kicks them back to consent page if they haven't agreed
+    if (sessionStorage.getItem("privacyConsentGranted") !== "true") {
+        window.location.href = './index.html';
     }
-    document.addEventListener('DOMContentLoaded', render);
-</script>
+    </script>
 </body>
+
 </html>
