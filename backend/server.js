@@ -326,81 +326,81 @@ function generateVisualTreePath(vulnerabilityType, extractedFeatures, password) 
     const isSymAffix = /^[^A-Za-z0-9]/.test(password) || /[^A-Za-z0-9]$/.test(password);
 
     let visualTree = "START TREE\n";
-    visualTree += "Node 1: Dictionary present?\n";
+    visualTree += "1. Dictionary present?\n";
 
     if (isDict) {
         visualTree += " ├─ Yes → [MATCHED]\n";
-        visualTree += " │   Node 2: Has leetspeak?\n";
+        visualTree += " │   2. Has leetspeak?\n";
         
         if (isLeet) {
             visualTree += " │    ├─ Yes → [MATCHED]\n";
-            visualTree += " │    │   Node 3: Common capitalization?\n";
+            visualTree += " │    │   3. Common capitalization?\n";
             
             if (isCommonCap) {
                 visualTree += " │    │    ├─ Yes → [MATCHED]\n";
-                visualTree += " │    │    │   Node 4: Numeric suffix?\n";
+                visualTree += " │    │    │   4. Numeric suffix?\n";
                 
                 if (isSuffix) {
                     visualTree += " │    │    │    ├─ Yes → [MATCHED]\n";
-                    visualTree += " │    │    │    │   Node 5: Symbol affix?\n";
+                    visualTree += " │    │    │    │   5. Symbol affix?\n";
                     
                     if (isSymAffix) {
                         visualTree += " │    │    │    │    ├─ Yes → [MATCHED]\n";
-                        visualTree += " │    │    │    │    │   Node 6: Length < 12?\n";
+                        visualTree += " │    │    │    │    │   6. Length < 12?\n";
                         visualTree += password.length < 12 
                             ? " │    │    │    │    │    ├─ Yes → [FINAL RESULT] → RULE-BASED\n" 
                             : " │    │    │    │    │    └─ No  → [FINAL RESULT] → DICTIONARY\n";
                     } else {
                         visualTree += " │    │    │    │    └─ No → [NOT MATCHED]\n";
-                        visualTree += " │    │    │    │         Node 7: Length < 12?\n";
+                        visualTree += " │    │    │    │         7. Length < 12?\n";
                         visualTree += password.length < 12 
                             ? " │    │    │    │          ├─ Yes → [FINAL RESULT] → RULE-BASED\n" 
                             : " │    │    │    │          └─ No  → [FINAL RESULT] → DICTIONARY\n";
                     }
                 } else {
                     visualTree += " │    │    │    └─ No → [NOT MATCHED]\n";
-                    visualTree += " │    │    │         Node 8: Length < 12?\n";
+                    visualTree += " │    │    │         8. Length < 12?\n";
                     visualTree += password.length < 12 
                         ? " │    │    │          ├─ Yes → [FINAL RESULT] → RULE-BASED\n" 
                         : " │    │    │          └─ No  → [FINAL RESULT] → DICTIONARY\n";
                 }
             } else {
                 visualTree += " │    │    └─ No → [NOT MATCHED]\n";
-                visualTree += " │    │         Node 9: Length < 12?\n";
+                visualTree += " │    │         9. Length < 12?\n";
                 visualTree += password.length < 12 
                     ? " │    │          ├─ Yes → [FINAL RESULT] → RULE-BASED\n" 
                     : " │    │          └─ No  → [FINAL RESULT] → DICTIONARY\n";
             }
         } else {
             visualTree += " │    └─ No → [NOT MATCHED]\n";
-            visualTree += " │         Node 10: Length < 12?\n";
+            visualTree += " │         10. Length < 12?\n";
             visualTree += password.length < 12 
                 ? " │          ├─ Yes → [FINAL RESULT] → DICTIONARY\n" 
                 : " │          └─ No  → [FINAL RESULT] → DICTIONARY\n";
         }
     } else {
         visualTree += " └─ No → [NOT MATCHED]\n";
-        visualTree += "      Node 11: Character class count < 3?\n";
+        visualTree += "      11. Character class count < 3?\n";
         
         if (extractedFeatures.character_class_count < 3) {
             visualTree += `       ├─ Yes → [MATCHED] (Class Count: ${extractedFeatures.character_class_count})\n`;
-            visualTree += "       │   Node 12: Has repetition?\n";
+            visualTree += "       │   12. Has repetition?\n";
             visualTree += hasRep
                 ? "       │    ├─ Yes → [FINAL RESULT] → BRUTE-FORCE\n"
                 : "       │    └─ No  → [FINAL RESULT] → BRUTE-FORCE\n";
         } else {
             visualTree += "       └─ No → [NOT MATCHED]\n";
-            visualTree += "            Node 13: Has sequence?\n";
+            visualTree += "            13. Has sequence?\n";
             
             if (hasSeq) {
                 visualTree += "             ├─ Yes → [MATCHED]\n";
-                visualTree += "             │   Node 14: Has digit?\n";
+                visualTree += "             │   14. Has digit?\n";
                 visualTree += hasDig
                     ? "             │    ├─ Yes → [FINAL RESULT] → RULE-BASED\n"
                     : "             │    └─ No  → [FINAL RESULT] → BRUTE-FORCE\n";
             } else {
                 visualTree += "             └─ No → [NOT MATCHED]\n";
-                visualTree += "                  Node 15: Length < 12?\n";
+                visualTree += "                  15. Length < 12?\n";
                 visualTree += password.length < 12 
                     ? "                       ├─ Yes → [FINAL RESULT] → BRUTE-FORCE\n"
                     : "                       └─ No  → [FINAL RESULT] → BRUTE-FORCE\n";
