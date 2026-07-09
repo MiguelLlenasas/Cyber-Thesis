@@ -164,23 +164,20 @@ function extractFeatures(password) {
 
 // ===== 2. PASSWORD CLASSIFICATION =====
 function classifyPassword(extractedFeatures) {
-    // 1. PURE DICTIONARY OVERRIDE (Shortcut bago mag-ML - mas pinahigpit)
-    if (
-        extractedFeatures.dictionary_present &&
-        !extractedFeatures.has_uppercase && // ◄ DAPAT WALANG UPPERCASE para masabing pure dictionary word
-        !extractedFeatures.has_digit &&
-        !extractedFeatures.has_symbol &&
-        !extractedFeatures.has_leetspeak &&
-        !extractedFeatures.numeric_suffix
-    ) {
+    
+// Isalpak ito sa pinaka-unahan ng classifyPassword bago mag-ML:
+if (extractedFeatures.dictionary_present && !extractedFeatures.has_digit && !extractedFeatures.has_symbol) {
+    // Kung may uppercase pero dictionary word naman talaga at walang rules, ibig sabihin normal capitalization lang ito ng isang dictionary string
+    if (extractedFeatures.has_uppercase && !extractedFeatures.has_leetspeak && !extractedFeatures.numeric_suffix) {
         return {
             label: "DICTIONARY",
             path: [
-                "Pure lowercase dictionary word detected",
-                "Prediction overridden to DICTIONARY"
+                "Capitalized dictionary word detected without rule complexity",
+                "Prediction handled as DICTIONARY classification"
             ]
         };
     }
+}
 
     // 2. PREPARE FEATURES FOR ML MODEL (Dito na dadaan sina helloWorld at GGwhfjete)
     const modelFeatures = [[
