@@ -17,6 +17,7 @@
             --cart-title: #899026;
             --red-accent: #df3838;
             --tree-node-bg: #dceec9;
+            --tree-node-active-bg: #fdf6e2;
             --table-header-bg: #c1bcba;
         }
 
@@ -227,9 +228,32 @@
             border: 1px solid #555;
             padding: 0.6rem 1rem;
             border-radius: 4px;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Century Gothic', 'Inter', sans-serif;
             font-weight: bold;
             color: #111;
+            max-width: 260px;
+            word-wrap: break-word;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease, max-width 0.2s ease;
+            user-select: none;
+        }
+
+        .node:hover {
+            background-color: #c5e3aa;
+            transform: scale(1.03);
+        }
+
+        /* Styling state when a node box displays its meaning text */
+        .node.showing-meaning {
+            background-color: var(--tree-node-active-bg);
+            border-color: #bfa15f;
+            max-width: 340px;
+            font-family: 'Century Gothic', 'Inter', sans-serif;
+            font-weight: normal;
+            font-size: 0.88rem;
+            color: #333;
+            padding: 0.8rem 1.2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
         /* CART Flow Text Explanation */
@@ -351,13 +375,18 @@
     </section>
 
     <script>
+        // Injects text rendering dynamically into nodes while maintaining structure
         function buildVerticalTreeHTML(node) {
             if (!node) return '';
             
+            // Clean subtitle artifacts if any exist dynamically
+            const nodeSubtitle = node.subtitle ? `\n${node.subtitle}` : '';
+            const fullDisplayLabel = `${node.name}${nodeSubtitle}`;
+            
             let html = `<li>
-                <div class="node">
+                <div class="node" onclick="toggleNodeMeaning(this)" data-original="${escapeHtml(fullDisplayLabel)}">
                     ${node.name}
-                    ${node.subtitle ? `<br>${node.subtitle}` : ''}
+                    ${node.subtitle ? `<br><small>${node.subtitle}</small>` : ''}
                 </div>`;
             
             if (node.children && node.children.length > 0) {
@@ -370,6 +399,69 @@
             
             html += `</li>`;
             return html;
+        }
+
+        // Simple helper to safely store values inside standard template strings
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // Toggles context text directly inside the boxes shown in image_c67735.png
+        function toggleNodeMeaning(element) {
+            const originalText = element.getAttribute('data-original');
+            
+            // Comprehensive definition matrix to fill meaning attributes on the fly
+            const meaningMap = {
+                "Dictionary present?": "Checks if the password matches terms found inside standard dictionary wordlists.",
+                "Has leetspeak?": "Detects character substitutions common in human passwords (such as replacing 'a' with '@').",
+                "Common capitalization?": "Identifies predictable validation behavior like altering only the first letter.",
+                "Numeric suffix?": "Checks for trailing numbers added directly onto a baseline token (e.g., '123').",
+                "Symbol affix?": "Looks for punctuation characters attached predictably to strings.",
+                "Length < 12?": "Evaluates whether the asset matches standard length criteria thresholds (< 12 elements).",
+                "Character class count < 3?": "Flags low character structural entropy (utilizing fewer than 3 unique classes).",
+                "Has repetition?": "Checks for repeated character blocks that decrease sequence randomness parameters.",
+                "Has sequence?": "Detects predictable sequential keyboard rows or letters (such as 'abcde' or 'qwert').",
+                "Has digit?": "Identifies basic numeric character inclusions within string features.",
+                "BRUTE-FORCE": "BRUTE-FORCE: Password contains structural variations requiring brute hardware permutations.",
+                "RULE-BASED": "RULE-BASED: Wordlist core present alongside systematic modifications or structural patterns.",
+                "DICTIONARY": "DICTIONARY: Directly references plaintext word arrays with zero mathematical protection.",
+                "Yes → [MATCHED]": "Condition confirmed. Following the execution path downwards into this rule branch.",
+                "No → [NOT MATCHED]": "Condition failed. Bypassing criteria down toward fallback branch verification.",
+                "Yes → [FINAL RESULT]": "Terminal leaf node criteria established. Finalizing classification output.",
+                "No → [FINAL RESULT]": "Terminal leaf node criteria established. Finalizing classification output."
+            };
+
+            // Detect current state
+            if (element.classList.contains('showing-meaning')) {
+                // Return to normal
+                element.classList.remove('showing-meaning');
+                element.innerHTML = originalText.replace(/\n/g, '<br>');
+            } else {
+                // Find matching dictionary entry key matching either name or baseline substring elements
+                let textKey = element.innerText.trim();
+                
+                // Clean substring text mapping arrays if subtitle is bundled
+                if (textKey.includes('\n')) {
+                    textKey = textKey.split('\n')[0].trim();
+                }
+
+                // If explicit match exists, map it; otherwise provide context-dependent branch text
+                let meaningText = meaningMap[textKey];
+                
+                if (!meaningText) {
+                    if (textKey.includes("MATCHED")) {
+                        meaningText = "Condition parameters matched, channeling tracking vector further down.";
+                    } else if (textKey.includes("FINAL RESULT")) {
+                        meaningText = "All conditional requirements parsed. Final classification node reached.";
+                    } else {
+                        meaningText = "Decision path calculation marker evaluating credential profile attributes.";
+                    }
+                }
+
+                // Display meaning inside the box
+                element.classList.add('showing-meaning');
+                element.innerHTML = `💡 ${meaningText}`;
+            }
         }
 
         function render() {
@@ -443,38 +535,8 @@
                 `;
             }
 
-            const treeData = {
-                name: "Dictionary present?",
-                children: [
-                    {
-                        name: "No → [NOT MATCHED]",
-                        children: [
-                            {
-                                name: "Character class count < 3",
-                                children: [
-                                    {
-                                        name: "Yes → [MATCHED]",
-                                        subtitle: "(Class Count: 1)",
-                                        children: [
-                                            {
-                                                name: "Has repetition?",
-                                                children: [
-                                                    {
-                                                        name: "No → [FINAL RESULT]",
-                                                        children: [
-                                                            { name: vulnerability || "BRUTE-FORCE" }
-                                                        ]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            };
+            // Connects to the dynamically generated Decision Tree from the server
+            const treeData = currentData.visual_decision_tree_trace;
 
             const displayKeys = {
                 "length": "Length",
@@ -492,8 +554,6 @@
             };
 
             const tableKeys = Object.keys(displayKeys);
-            
-            // Format vulnerability string into CSS class name
             const vulnClass = vulnerability ? vulnerability.toLowerCase() : '';
 
             container.innerHTML = `
@@ -514,29 +574,20 @@
                             let formattedStr = s;
                             
                             if (raw) {
-                                // Recreate the shuffled sample logic from the backend
                                 const halfLength = Math.ceil(raw.length / 2);
                                 const shuffledSample = raw.substring(halfLength) + raw.substring(0, halfLength);
                                 
-                                // Helper function to wrap the string safely
                                 const obfuscateTarget = (targetText) => {
-                                    // Target strings wrapped in single quotes (as outputted by your backend string literals)
-                                    // By searching for `'password'`, we prevent replacing random letters inside standard sentences.
                                     const exactMatch = "'" + targetText + "'";
                                     const replacementTag = "'<span class=\"revealable-pw\" data-pw=\"" + targetText + "\" title=\"Click and hold to reveal\">" + maskPassword(targetText) + "</span>'";
-                                    
-                                    // Split and join acts as a replaceAll for compatibility
                                     formattedStr = formattedStr.split(exactMatch).join(replacementTag);
                                 };
 
                                 obfuscateTarget(raw);
-                                
-                                // Also hide the dynamically shuffled sample if it's referenced
                                 if (shuffledSample !== raw) {
                                     obfuscateTarget(shuffledSample);
                                 }
                             }
-                            
                             return `<li>${formattedStr}</li>`;
                         }).join('')}
                     </ul>
@@ -544,7 +595,7 @@
 
                 <div class="results-card">
                     <h3 class="title-green">Decision Tree Path Result & CART Flow</h3>
-                    <p class="subtitle">This real-time diagram demonstrates the exact logic path triggered inside the Decision Tree nodes:</p>
+                    <p class="subtitle">💡 <strong>Interactive Diagram:</strong> Click directly on any boxed node inside the path diagram below to see what it means, then click it again to return it to normal.</p>
                     
                     <div class="diagram-box">
                         <div class="tree">
@@ -554,7 +605,7 @@
                         </div>
                     </div>
 
-                    <h4 class="cart-flow-title">CART Decision Flow (Text Explanation)</h4>
+                    <h4 class="cart-flow-title" style="margin-top: 2rem;">CART Decision Flow (Text Explanation)</h4>
                     <div class="diagram-box">
                         ${(decision_path || []).map((step, i) => `
                             <div class="cart-step">
@@ -600,14 +651,12 @@
                 const reveal = () => { el.textContent = rawPw; };
                 const hide = () => { el.textContent = maskedPw; };
 
-                // Mouse events (Desktop)
                 el.addEventListener('mousedown', reveal);
                 el.addEventListener('mouseup', hide);
                 el.addEventListener('mouseleave', hide);
 
-                // Touch events (Mobile)
                 el.addEventListener('touchstart', (e) => {
-                    e.preventDefault(); // Prevents text selection on mobile hold
+                    e.preventDefault();
                     reveal();
                 });
                 el.addEventListener('touchend', hide);
@@ -615,12 +664,9 @@
             });
         }
 
-        // === NEW: Clear results on Refresh, Back/Forward Arrow ===
+        // === Clear results on Refresh, Back/Forward Arrow ===
         window.addEventListener('pageshow', function(event) {
-            // Check if the page is loaded from the Back-Forward Cache (bfcache)
             const isCached = event.persisted;
-            
-            // Use Performance API to check for reloads or history navigation
             const navEntries = performance.getEntriesByType("navigation");
             let isReload = false;
             let isHistoryNav = false;
@@ -630,20 +676,14 @@
                 isHistoryNav = navEntries[0].type === "back_forward";
             }
 
-            // If the user refreshed OR used the arrows to get here
             if (isReload || isHistoryNav || isCached) {
-                // Clear the current analysis data
                 sessionStorage.removeItem('lastAnalysis');
-                
-                // Re-run the render function to update the UI immediately
                 render(); 
             }
         });
 
         document.addEventListener('DOMContentLoaded', () => {
             render();
-            
-            // === NEW: Handle "Test Another" button click ===
             const testAnotherBtn = document.getElementById('testAnotherBtn');
             if (testAnotherBtn) {
                 testAnotherBtn.addEventListener('click', function() {
@@ -653,7 +693,6 @@
         });
     </script>
     <script>
-    // Security Gate: Kicks them back to consent page if they haven't agreed
     if (sessionStorage.getItem("privacyConsentGranted") !== "true") {
         window.location.href = './index.html';
     }

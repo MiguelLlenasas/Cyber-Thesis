@@ -313,7 +313,7 @@ function getStrategies(vulnerabilityType, extractedFeatures, password) {
 // ===== 4. DYNAMIC DECISION TREE VISUAL TRACE PATH =====
 function generateVisualTreePath(vulnerabilityType, extractedFeatures, password) {
     const isDict = extractedFeatures.dictionary_present === 1;
-    const isRule = extractedFeatures.rule_pattern_present === 1;
+    const isRule = extractedFeatures.rule_pattern_present === 1; // Retained for 1:1 parity with original feature extraction
     const isLeet = extractedFeatures.has_leetspeak === 1;
     const isSuffix = extractedFeatures.numeric_suffix === 1;
     const hasSeq = extractedFeatures.has_sequence === 1;
@@ -324,93 +324,128 @@ function generateVisualTreePath(vulnerabilityType, extractedFeatures, password) 
     const isCommonCap = /^[A-Z][a-z]+/.test(password);
     // Check general symbol affix habits at start/end
     const isSymAffix = /^[^A-Za-z0-9]/.test(password) || /[^A-Za-z0-9]$/.test(password);
+    const isLenLess = password.length < 12;
 
-    let visualTree = "START TREE\n";
-    visualTree += "1. Dictionary present?\n";
+    // Dictionary definitions for variables and core checks
+    const meanings = {
+        dict: "Checks if the password relies on words found in standard language dictionaries.",
+        leet: "Detects predictable character substitutions (e.g., '@' for 'a', '0' for 'o').",
+        cap: "Identifies predictable human habits like capitalizing only the very first letter.",
+        suffix: "Detects numbers predictably tacked onto the end of a word (e.g., 'Password123').",
+        affix: "Checks if symbols are placed predictably at the very start or end of the string.",
+        len: "Evaluates if the password meets the minimum recommended length of 12 characters.",
+        classes: "Checks if the password lacks diversity (uses fewer than 3 character types like upper, lower, numbers).",
+        rep: "Detects consecutive repeated characters (e.g., 'aaa') which lower mathematical complexity.",
+        seq: "Detects keyboard patterns or alphabetical sequences (e.g., '1234', 'abc').",
+        dig: "Checks if any numbers are included in the string.",
+        "BRUTE-FORCE": "BRUTE-FORCE: Password resists predictable patterns; security relies purely on length and complexity.",
+        "RULE-BASED": "RULE-BASED: Password uses a base word but applies predictable human rules (like trailing numbers).",
+        "DICTIONARY": "DICTIONARY: Password is a raw dictionary word, highly vulnerable to immediate cracking."
+    };
+
+    // Shared definitions for transitional structural states
+    const transitionMeanings = {
+        matched: "The rule condition was satisfied, locking the evaluation path into this matching branch.",
+        notMatched: "The rule condition failed to match, forcing the evaluation loop to fall back to alternative checks.",
+        finalResult: "The tracking conditions are fully completed. The final classification outcome is now determined."
+    };
+
+    // Helper function to build the final prediction node with structural meanings
+    const buildFinal = (label, conditionYes) => [
+        {
+            name: conditionYes ? "Yes → [FINAL RESULT]" : "No → [FINAL RESULT]",
+            meaning: transitionMeanings.finalResult,
+            children: [{ name: label, meaning: meanings[label] }]
+        }
+    ];
+
+    let root = { name: "Dictionary present?", meaning: meanings.dict, children: [] };
 
     if (isDict) {
-        visualTree += " ├─ Yes → [MATCHED]\n";
-        visualTree += " │   2. Has leetspeak?\n";
-        
+        let dictYes = { 
+            name: "Yes → [MATCHED]", 
+            meaning: "The password was successfully verified against a core dictionary file, marking it as an uncomplex wordlist entry.",
+            children: [{ name: "Has leetspeak?", meaning: meanings.leet, children: [] }] 
+        };
+        root.children.push(dictYes);
+        let leetNode = dictYes.children[0];
+
         if (isLeet) {
-            visualTree += " │    ├─ Yes → [MATCHED]\n";
-            visualTree += " │    │   3. Common capitalization?\n";
-            
+            let leetYes = { 
+                name: "Yes → [MATCHED]", 
+                meaning: transitionMeanings.matched,
+                children: [{ name: "Common capitalization?", meaning: meanings.cap, children: [] }] 
+            };
+            leetNode.children.push(leetYes);
+            let capNode = leetYes.children[0];
+
             if (isCommonCap) {
-                visualTree += " │    │    ├─ Yes → [MATCHED]\n";
-                visualTree += " │    │    │   4. Numeric suffix?\n";
-                
+                let capYes = { 
+                    name: "Yes → [MATCHED]", 
+                    meaning: transitionMeanings.matched,
+                    children: [{ name: "Numeric suffix?", meaning: meanings.suffix, children: [] }] 
+                };
+                capNode.children.push(capYes);
+                let suffixNode = capYes.children[0];
+
                 if (isSuffix) {
-                    visualTree += " │    │    │    ├─ Yes → [MATCHED]\n";
-                    visualTree += " │    │    │    │   5. Symbol affix?\n";
-                    
+                    let suffixYes = { 
+                        name: "Yes → [MATCHED]", 
+                        meaning: transitionMeanings.matched,
+                        children: [{ name: "Symbol affix?", meaning: meanings.affix, children: [] }] 
+                    };
+                    suffixNode.children.push(suffixYes);
+                    let affixNode = suffixYes.children[0];
+
                     if (isSymAffix) {
-                        visualTree += " │    │    │    │    ├─ Yes → [MATCHED]\n";
-                        visualTree += " │    │    │    │    │   6. Length < 12?\n";
-                        visualTree += password.length < 12 
-                            ? " │    │    │    │    │    ├─ Yes → [FINAL RESULT] → RULE-BASED\n" 
-                            : " │    │    │    │    │    └─ No  → [FINAL RESULT] → DICTIONARY\n";
+                        affixNode.children.push({ name: "Yes → [MATCHED]", meaning: transitionMeanings.matched, children: [{ name: "Length < 12?", meaning: meanings.len, children: buildFinal(isLenLess ? "RULE-BASED" : "DICTIONARY", isLenLess) }] });
                     } else {
-                        visualTree += " │    │    │    │    └─ No → [NOT MATCHED]\n";
-                        visualTree += " │    │    │    │         7. Length < 12?\n";
-                        visualTree += password.length < 12 
-                            ? " │    │    │    │          ├─ Yes → [FINAL RESULT] → RULE-BASED\n" 
-                            : " │    │    │    │          └─ No  → [FINAL RESULT] → DICTIONARY\n";
+                        affixNode.children.push({ name: "No → [NOT MATCHED]", meaning: transitionMeanings.notMatched, children: [{ name: "Length < 12?", meaning: meanings.len, children: buildFinal(isLenLess ? "RULE-BASED" : "DICTIONARY", isLenLess) }] });
                     }
                 } else {
-                    visualTree += " │    │    │    └─ No → [NOT MATCHED]\n";
-                    visualTree += " │    │    │         8. Length < 12?\n";
-                    visualTree += password.length < 12 
-                        ? " │    │    │          ├─ Yes → [FINAL RESULT] → RULE-BASED\n" 
-                        : " │    │    │          └─ No  → [FINAL RESULT] → DICTIONARY\n";
+                    suffixNode.children.push({ name: "No → [NOT MATCHED]", meaning: transitionMeanings.notMatched, children: [{ name: "Length < 12?", meaning: meanings.len, children: buildFinal(isLenLess ? "RULE-BASED" : "DICTIONARY", isLenLess) }] });
                 }
             } else {
-                visualTree += " │    │    └─ No → [NOT MATCHED]\n";
-                visualTree += " │    │         9. Length < 12?\n";
-                visualTree += password.length < 12 
-                    ? " │    │          ├─ Yes → [FINAL RESULT] → RULE-BASED\n" 
-                    : " │    │          └─ No  → [FINAL RESULT] → DICTIONARY\n";
+                capNode.children.push({ name: "No → [NOT MATCHED]", meaning: transitionMeanings.notMatched, children: [{ name: "Length < 12?", meaning: meanings.len, children: buildFinal(isLenLess ? "RULE-BASED" : "DICTIONARY", isLenLess) }] });
             }
         } else {
-            visualTree += " │    └─ No → [NOT MATCHED]\n";
-            visualTree += " │         10. Length < 12?\n";
-            visualTree += password.length < 12 
-                ? " │          ├─ Yes → [FINAL RESULT] → DICTIONARY\n" 
-                : " │          └─ No  → [FINAL RESULT] → DICTIONARY\n";
+            leetNode.children.push({ name: "No → [NOT MATCHED]", meaning: transitionMeanings.notMatched, children: [{ name: "Length < 12?", meaning: meanings.len, children: buildFinal("DICTIONARY", isLenLess) }] });
         }
     } else {
-        visualTree += " └─ No → [NOT MATCHED]\n";
-        visualTree += "      11. Character class count < 3?\n";
-        
+        let dictNo = { 
+            name: "No → [NOT MATCHED]", 
+            meaning: "The password bypassed dictionary lookup indexes, advancing the evaluation to structural pattern extraction metrics.",
+            children: [{ name: "Character class count < 3?", meaning: meanings.classes, children: [] }] 
+        };
+        root.children.push(dictNo);
+        let classNode = dictNo.children[0];
+
         if (extractedFeatures.character_class_count < 3) {
-            visualTree += `       ├─ Yes → [MATCHED] (Class Count: ${extractedFeatures.character_class_count})\n`;
-            visualTree += "       │   12. Has repetition?\n";
-            visualTree += hasRep
-                ? "       │    ├─ Yes → [FINAL RESULT] → BRUTE-FORCE\n"
-                : "       │    └─ No  → [FINAL RESULT] → BRUTE-FORCE\n";
+            classNode.children.push({ 
+                name: "Yes → [MATCHED]", 
+                subtitle: `(Class Count: ${extractedFeatures.character_class_count})`, 
+                meaning: `The rule logic matched because the password only uses ${extractedFeatures.character_class_count} character class(es), falling short of full complexity benchmarks.`,
+                children: [{ name: "Has repetition?", meaning: meanings.rep, children: buildFinal("BRUTE-FORCE", hasRep) }] 
+            });
         } else {
-            visualTree += "       └─ No → [NOT MATCHED]\n";
-            visualTree += "            13. Has sequence?\n";
-            
+            let classNo = { 
+                name: "No → [NOT MATCHED]", 
+                meaning: "The password uses 3 or more character classes, successfully avoiding the low character diversity penalty branch.",
+                children: [{ name: "Has sequence?", meaning: meanings.seq, children: [] }] 
+            };
+            classNode.children.push(classNo);
+            let seqNode = classNo.children[0];
+
             if (hasSeq) {
-                visualTree += "             ├─ Yes → [MATCHED]\n";
-                visualTree += "             │   14. Has digit?\n";
-                visualTree += hasDig
-                    ? "             │    ├─ Yes → [FINAL RESULT] → RULE-BASED\n"
-                    : "             │    └─ No  → [FINAL RESULT] → BRUTE-FORCE\n";
+                seqNode.children.push({ name: "Yes → [MATCHED]", meaning: transitionMeanings.matched, children: [{ name: "Has digit?", meaning: meanings.dig, children: buildFinal(hasDig ? "RULE-BASED" : "BRUTE-FORCE", hasDig) }] });
             } else {
-                visualTree += "             └─ No → [NOT MATCHED]\n";
-                visualTree += "                  15. Length < 12?\n";
-                visualTree += password.length < 12 
-                    ? "                       ├─ Yes → [FINAL RESULT] → BRUTE-FORCE\n"
-                    : "                       └─ No  → [FINAL RESULT] → BRUTE-FORCE\n";
+                seqNode.children.push({ name: "No → [NOT MATCHED]", meaning: transitionMeanings.notMatched, children: [{ name: "Length < 12?", meaning: meanings.len, children: buildFinal("BRUTE-FORCE", isLenLess) }] });
             }
         }
     }
     
-    return visualTree;
+    return root;
 }
-
 // ===== API ROUTE =====
 app.post('/analyze', (req, res) => {
     const { password } = req.body;
