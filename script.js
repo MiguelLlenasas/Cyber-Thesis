@@ -52,7 +52,8 @@ async function goToResults() {
 
         sessionStorage.setItem('lastAnalysis', JSON.stringify(data));
 
-        window.location.href = `results.html?password=${encodeURIComponent(password)}`;
+        // FIXED LINE: Redirect without appending the password to the URL
+        window.location.href = 'results.html';
 
     } catch (error) {
         console.error("Connection Error:", error);
@@ -66,20 +67,20 @@ async function goToResults() {
 // 3. UI HELPERS (Show/Hide Password)
 function togglePassword() {
 
-            const passwordInput = document.getElementById("passwordInput");
-            const toggleBtn = document.getElementById("toggleBtn");
+    const passwordInput = document.getElementById("passwordInput");
+    const toggleBtn = document.getElementById("toggleBtn");
 
-            if (passwordInput.type === "password") {
-                passwordInput.type = "text";
-                toggleBtn.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
-            } else {
-                passwordInput.type = "password";
-                toggleBtn.innerHTML = '<i class="fa-solid fa-eye"></i>';
-            }
-        }
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        toggleBtn.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+    } else {
+        passwordInput.type = "password";
+        toggleBtn.innerHTML = '<i class="fa-solid fa-eye"></i>';
+    }
+}
 
 // Suporta para sa pag-pindot ng "Enter" key sa keyboard
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
         const activeId = document.activeElement.id;
         if (activeId === 'passwordInput') {

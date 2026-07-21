@@ -172,8 +172,8 @@ if (extractedFeatures.dictionary_present && !extractedFeatures.has_digit && !ext
         return {
             label: "DICTIONARY",
             path: [
-                "Capitalized dictionary word detected without rule complexity",
-                "Prediction handled as DICTIONARY classification"
+                "A capitalized dictionary word was detected without additional complexity. Passwords that rely only on capitalization are generally easier to predict.",
+                "Prediction handled as the DICTIONARY classification"
             ]
         };
     }
@@ -205,14 +205,14 @@ if (extractedFeatures.dictionary_present && !extractedFeatures.has_digit && !ext
 
     let finalLabel = labelMap[prediction[0]];
     let finalPath = [
-        "Machine Learning model analyzed the password features",
+        "Your password has been analyzed based on its structure and patterns",
         `Prediction: ${finalLabel}`
     ];
 
     // 4. POST-ML FALLBACK
     if (finalLabel === "DICTIONARY" && extractedFeatures.rule_pattern_present === 1) {
         finalLabel = "RULE-BASED";
-        finalPath.push("Post-Machine Learning Fallback: Corrected to RULE-BASED due to active rule patterns.");
+        finalPath.push("Your password contains predictable character substitutions and common patterns, so the system classified it as Rule-Based Vulnerability.");
     }
 
     return {

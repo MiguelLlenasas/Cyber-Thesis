@@ -31,7 +31,6 @@
 
         body {
             font-family: 'Century Gothic', 'Inter', sans-serif;
-            background: #ffffff;
             color: var(--text-light);
             line-height: 1.6;
             min-height: 100vh;
@@ -412,6 +411,7 @@
 
         .wave {
             background: rgba(255, 255, 255, 0.15);
+            /* Slightly lower opacity for dark bg */
             border-radius: 1000% 1000% 0 0;
             position: fixed;
             width: 200%;
@@ -473,18 +473,22 @@
         }
 
         body.crack-page .password-tester {
-            padding: 120px 20px 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
             background: transparent;
-            min-height: calc(100vh - 140px);
+            min-height: 100vh;
         }
 
         body.crack-page .tester-card {
+            width: 100%;
             max-width: 840px;
             margin: 0 auto;
             padding: 60px 55px;
             background: rgba(255, 255, 255, 0.98);
             border-radius: 32px;
-            box-shadow: 0 35px 90px rgba(0, 0, 0, 0.09);
+            box-shadow: 0 35px 90px rgba(0, 0, 0, 0.15);
             border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
@@ -531,7 +535,6 @@
             color: #161616;
             box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.04);
             transition: all 0.3s ease;
-            /* Ensure smooth transition back from error state */
         }
 
         body.crack-page .password-input:focus {
@@ -696,208 +699,22 @@
             background-color: #fdf2f2 !important;
         }
 
-        /* ===== Information Icon & Modal Layouts ===== */
-        .info-wrapper {
-            position: absolute;
-            top: -35px;
-            right: 5px;
-            z-index: 10;
-        }
-
-        .info-btn {
-            background: none;
-            border: none;
-            font-size: 1.25rem;
-            color: #514f4c;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .info-btn:hover {
-            color: var(--highlight-color);
-        }
-
-        /* Lightbox Modal Structure */
-        .info-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            /* Changed from rgba(0, 0, 0, 0.65) */
-            backdrop-filter: none;
-            /* Remove or keep blur as needed */
-            z-index: 99999;
+        /* ===== Compare Badge Placement ===== */
+        .compare-badge {
             display: flex;
-            justify-content: center;
             align-items: center;
-            padding: 20px;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .info-modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .info-modal-card {
-            background: #e5e5e5;;
-            color: #111111;
-            width: 100%;
-            max-width: 960px;
-            border-radius: 24px;
-            padding: 40px 30px 35px;
-            position: relative;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
-            transform: translateY(30px);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
-        }
-
-        .info-modal-overlay.active .info-modal-card {
-            transform: translateY(0);
-        }
-
-        .info-modal-close {
-            position: absolute;
-            top: 20px;
-            right: 25px;
-            background: none;
-            border: none;
-            font-size: 1.8rem;
-            color: #666;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .info-modal-close:hover {
-            color: var(--highlight-color);
-        }
-
-        /* Side-by-Side Architectural Twin-Box Matrix Layout */
-        .info-twin-grid {
-            display: flex;
-            gap: 25px;
-            margin-top: 15px;
-        }
-
-        /* --- UPDATED: Modal Contents Animation Styling --- */
-
-        /* Reset state (Outward animation when closing) - Fast & No Delays */
-        .arch-box {
-            flex: 1;
-            background: #fafaf9;
-            border: 3.5px solid #121212;
-            border-radius: 14px;
-            padding: 24px;
-            opacity: 0;
-            transform: translateY(25px);
-            transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-
-        .arch-box ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .arch-box ul li {
-            font-size: 0.92rem;
-            line-height: 1.6;
-            margin-bottom: 12px;
-            color: #222222;
-            position: relative;
-            padding-left: 18px;
-            opacity: 0;
-            transform: translateX(-10px);
-            transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-
-        /* Active state (Inward animation when opening) - Staggered Delays */
-        .info-modal-overlay.active .arch-box {
-            opacity: 1;
-            transform: translateY(0);
-            transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.15);
-        }
-
-        .info-modal-overlay.active .arch-box ul li {
-            opacity: 1;
-            transform: translateX(0);
-            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
-        }
-
-        /* Box Stagger Sequence */
-        .info-modal-overlay.active .arch-box:nth-child(1) {
-            transition-delay: 0.15s;
-        }
-
-        .info-modal-overlay.active .arch-box:nth-child(2) {
-            transition-delay: 0.30s;
-        }
-
-        /* Left Box Text Stagger */
-        .info-modal-overlay.active .arch-box:nth-child(1) ul li:nth-child(1) {
-            transition-delay: 0.30s;
-        }
-
-        .info-modal-overlay.active .arch-box:nth-child(1) ul li:nth-child(2) {
-            transition-delay: 0.40s;
-        }
-
-        .info-modal-overlay.active .arch-box:nth-child(1) ul li:nth-child(3) {
-            transition-delay: 0.50s;
-        }
-
-        .info-modal-overlay.active .arch-box:nth-child(1) ul li:nth-child(4) {
-            transition-delay: 0.60s;
-        }
-
-        /* Right Box Text Stagger */
-        .info-modal-overlay.active .arch-box:nth-child(2) ul li:nth-child(1) {
-            transition-delay: 0.45s;
-        }
-
-        .info-modal-overlay.active .arch-box:nth-child(2) ul li:nth-child(2) {
-            transition-delay: 0.55s;
-        }
-
-        .info-modal-overlay.active .arch-box:nth-child(2) ul li:nth-child(3) {
-            transition-delay: 0.65s;
-        }
-
-        /* ------------------------------------------------ */
-
-        .arch-box h2 {
-            font-size: 1.35rem;
-            font-weight: 800;
-            margin-bottom: 12px;
-            color: #003366;
-            border-bottom: 2px solid #003366;
-            padding-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .arch-box ul li::before {
-            content: "▪";
-            position: absolute;
-            left: 0;
-            top: 0;
-            color: #003366;
-            font-size: 0.85rem;
-        }
-
-        @media (max-width: 820px) {
-            .info-twin-grid {
-                flex-direction: column;
-                max-height: 70vh;
-                overflow-y: auto;
-            }
-
-            .info-modal-card {
-                padding: 35px 20px 20px;
-            }
+            justify-content: center;
+            gap: 8px;
+            color: #1e40af;
+            /* Deep Blue text and icon */
+            background: rgba(30, 64, 175, 0.1);
+            /* Light Deep Blue background */
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            width: fit-content;
+            margin: 0 auto 20px auto;
         }
 
         /* ======================================================= */
@@ -907,48 +724,44 @@
 
 <body class="crack-page">
 
-    <!-- Background Waves -->
     <div class="wave"></div>
     <div class="wave"></div>
     <div class="wave"></div>
 
-    <!-- Password Tester Section -->
     <section class="password-tester" id="tester">
-        <!-- Main Card -->
         <div class="tester-card intro-card">
 
-            <!-- Header (Staggered Intro Delay 1) -->
             <header class="hero-header intro-stagger delay-1">
                 <h1 class="hero-title">Password Vulnerability Classification System</h1>
                 <p class="hero-subtitle">For Password Analysis Overview</p>
+                <!-- Removed the redundant subtitle text from here -->
             </header>
 
             <div class="tester-layout">
                 <div class="tester-main">
 
-                    <!-- Input Container (Staggered Intro Delay 2) -->
                     <div class="tester-container intro-stagger delay-2">
-
-                        <!-- Information Icon Wrapper with Modal Trigger -->
-                        <div class="info-wrapper">
-                            <button class="info-btn" type="button" aria-label="Information"
-                                onclick="toggleInfoModal(true)">
-                                <i class="fa-solid fa-circle-info"></i>
-                            </button>
+                        <!-- Added as a highlighted UI badge prompting the user directly above the input -->
+                        <div class="compare-badge">
+                            <i class="fa-solid fa-code-compare"></i> Try to input another password to compare
                         </div>
 
-                        <input type="password" id="passwordInput" class="password-input"
-                            placeholder="Enter a password to test..." onkeyup="checkPassword()">
-
-                        <button id="toggleBtn" class="toggle-btn" onclick="togglePassword()">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
+                        <div style="position: relative;">
+                            <input type="password" id="passwordInput" class="password-input"
+                                placeholder="Enter a password to test..." onkeyup="checkPassword()">
+                            <button id="toggleBtn" class="toggle-btn" onclick="togglePassword()">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Button Container (Staggered Intro Delay 3) -->
-                    <div class="tester-action-row intro-stagger delay-3">
+                    <div class="tester-action-row intro-stagger delay-3" style="gap: 15px;">
                         <button type="button" id="enterBtn" class="enter-btn" onclick="animateEnterAndGoToResults()">
                             ENTER
+                        </button>
+                        <button type="button" id="resetTesterBtn" class="enter-btn" style="background: #e74c3c;"
+                            onclick="resetPasswordTest()">
+                            RESET TEST
                         </button>
                     </div>
 
@@ -956,50 +769,6 @@
             </div>
         </div>
     </section>
-
-    <!-- High-Fidelity Twin-Box Architectural Information Lightbox -->
-    <div id="infoModalOverlay" class="info-modal-overlay" onclick="handleOverlayClick(event)">
-        <div class="info-modal-card">
-            <button class="info-modal-close" onclick="toggleInfoModal(false)"
-                aria-label="Close Information">&times;</button>
-            <div class="info-twin-grid">
-
-                <!-- Left Box: System Specifications -->
-                <div class="arch-box">
-                    <h2>About the System</h2>
-                    <ul>
-                        <li><strong>Password Analysis:</strong> The system analyzes the structural characteristics of
-                            the entered password, including its length, character combinations, and common patterns.
-                        </li>
-                        <li><strong>Vulnerability Classification:</strong> Using the extracted password characteristics,
-                            the system determines which password attack. Brute-Force, Dictionary-Based, or Rule-Based,
-                            the password is most vulnerable to.</li>
-                        <li><strong>Privacy Protection:</strong> Only password characteristics are analyzed. The system
-                            does not store, save, or display the actual password after the analysis is completed.</li>
-                        <li><strong>Recommendations:</strong>After the classification, the system provides explanations
-                            and recommendations to help users create stronger and more secure passwords.</li>
-                    </ul>
-                </div>
-                <!-- Right Box: Password Domain Processing -->
-                <div class="arch-box">
-                    <h2>Understanding the Results</h2>
-                    <ul>
-                        <li><strong>Sample Password Only:</strong> Enter a sample password for analysis. Do not use
-                            passwords from your personal accounts.</li>
-                        <li><strong>Password Characteristics:</strong>The system examines password length, uppercase and
-                            lowercase letters, numbers, special characters, repeated characters, and common word
-                            patterns.</li>
-                        <li><strong>Secure Processing:</strong> Your password is immediately converted into feature
-                            values for analysis. The original password is not stored or recorded.</li>
-                        <li><strong>Classification Results:</strong> After processing, the system identifies which
-                            attack strategy the password is most vulnerable to and explains the result in an
-                            easy-to-understand manner.</li>
-                    </ul>
-                </div>
-
-            </div>
-        </div>
-    </div>
 
     <script>
         // Security Gate: Kicks them back to consent page if they haven't agreed
@@ -1009,24 +778,6 @@
     </script>
 
     <script>
-        // Info Modal Open/Close Controls
-        function toggleInfoModal(isOpen) {
-            const overlay = document.getElementById('infoModalOverlay');
-            if (overlay) {
-                if (isOpen) {
-                    overlay.classList.add('active');
-                } else {
-                    overlay.classList.remove('active');
-                }
-            }
-        }
-
-        function handleOverlayClick(event) {
-            if (event.target.id === 'infoModalOverlay') {
-                toggleInfoModal(false);
-            }
-        }
-
         // Custom Toast Notification Function
         function showCustomToast(message) {
             let toast = document.getElementById('customToast');
@@ -1053,7 +804,7 @@
             const pwInput = document.getElementById('passwordInput');
             if (pwInput && pwInput.value.trim() === '') {
                 // Show Custom Toast
-                showCustomToast('Please enter a password to analyze.');
+                showCustomToast('Please enter a password to compare.');
 
                 // Add error shake animation to input field
                 pwInput.classList.remove('input-error');
@@ -1070,23 +821,47 @@
 
             try {
                 document.body.classList.remove('enter-animate');
-                // force reflow so animation restarts every click
                 void document.body.offsetWidth;
                 document.body.classList.add('enter-animate');
             } catch (e) { }
 
-            // Delay navigation to let the animation start
             setTimeout(() => {
                 if (typeof goToResults === 'function') {
                     goToResults();
                 } else {
-                    // Fallback: navigate if function isn't available for some reason
                     window.location.href = 'results.html';
                 }
             }, 120);
         }
 
-        // --- UPDATED: Aggressive Enter key listener ---
+        // Function to completely reset the password test
+        function resetPasswordTest() {
+            // Clear any stored analysis data
+            sessionStorage.removeItem('lastAnalysis');
+            sessionStorage.removeItem('analysisHistory');
+
+            // Clear the password input field if it exists on this page
+            const pwInput = document.getElementById('passwordInput');
+            if (pwInput) {
+                pwInput.value = '';
+            }
+
+            // Redirect to the entry page
+            window.location.replace('crack-tester.html');
+        }
+
+        // NAVIGATION GUARD: If the user somehow navigates back to this page 
+        // after a reset (when history is empty), immediately force them to the start page.
+        if (!sessionStorage.getItem("analysisHistory") && !sessionStorage.getItem("lastAnalysis")) {
+            window.location.replace('crack-tester.html');
+        }
+
+        // Security Gate: Kicks them back to consent page if they haven't agreed
+        if (sessionStorage.getItem("privacyConsentGranted") !== "true") {
+            window.location.href = './index.html';
+        }
+
+        // --- ADDED: Aggressive Enter key listener ---
         document.addEventListener('DOMContentLoaded', () => {
             const pwInput = document.getElementById('passwordInput');
             if (pwInput) {
@@ -1098,7 +873,7 @@
                         event.stopImmediatePropagation(); // Blocks script.js from seeing the event
                         animateEnterAndGoToResults();
                     }
-                }, true); // 'true' forces this to run before script.js
+                }, true);
 
                 // 2. Silence 'keyup' and 'keypress' so script.js doesn't trigger the default alert
                 ['keyup', 'keypress'].forEach(eventType => {
@@ -1112,14 +887,6 @@
                 });
             }
         });
-    </script>
-
-    <script>
-        // REDIRECTION GATE: If they already have an analysis history, 
-        // going back redirects them to the comparison page instead.
-        if (sessionStorage.getItem("lastAnalysis") || sessionStorage.getItem("analysisHistory")) {
-            window.location.href = 'comparison.html';
-        }
     </script>
 
     <script src="script.js"></script>

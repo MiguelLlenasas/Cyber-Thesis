@@ -9,20 +9,74 @@
         /* Exact color matches based on the provided design */
         :root {
             --bg-page: #ffffff;
-            --card-bg: #d5d7db;
-            --card-border: #91c693;
+            --card-bg: #e2e8f0;
+            /* Updated to Slate Grey for contrast */
+            --card-border: #94a3b8;
+            /* Darker grey border */
             --text-dark: #222222;
             --title-green: #44724b;
-            --badge-bg: #ccc; /* Default fallback */
-            --cart-title: #899026;
+            --badge-bg: #94a3b8;
+            /* Updated default fallback to grey */
+            --cart-title: #000000;
             --red-accent: #df3838;
             --tree-node-bg: #dceec9;
             --tree-node-active-bg: #fdf6e2;
-            --table-header-bg: #c1bcba;
+            --table-header-bg: #cbd5e1;
+            /* Grey table header */
+            --blue-highlight: #3b82f6;
+        }
+
+        /* ==========================================================================
+           Sliding Diagonals Background Animation CSS (Deep Blue, Black, Grey)
+           ========================================================================== */
+        html {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            background-color: #000000;
+            /* Dark base behind the transparent diagonals */
+        }
+
+        .bg {
+            animation: slide 12s ease-in-out infinite alternate;
+            background-image: linear-gradient(-60deg, #020617 50%, #0b1329 50%);
+            /* Midnight Black & Dark Navy */
+            bottom: 0;
+            left: -50%;
+            opacity: 0.6;
+            position: fixed;
+            right: -50%;
+            top: 0;
+            z-index: -1;
+        }
+
+        .bg2 {
+            animation-direction: alternate-reverse;
+            animation-duration: 16s;
+            background-image: linear-gradient(-60deg, #1e293b 50%, #0f172a 50%);
+            /* Dark Steel & Charcoal */
+        }
+
+        .bg3 {
+            animation-duration: 20s;
+            background-image: linear-gradient(-60deg, #0f172a 50%, #334155 50%);
+            /* Charcoal Grey & Deep Slate Blue */
+        }
+
+        @keyframes slide {
+            0% {
+                transform: translateX(-25%);
+            }
+
+            100% {
+                transform: translateX(25%);
+            }
         }
 
         body.results-page {
-            background: var(--bg-page);
+            background: transparent;
             color: var(--text-dark);
             font-family: "Century Gothic", "Inter", sans-serif;
             padding: 3rem 1rem 4.5rem;
@@ -34,6 +88,9 @@
             margin: 0 auto;
             display: grid;
             gap: 1.5rem;
+            position: relative;
+            z-index: 1;
+            /* Keep above sliding background */
         }
 
         .results-hero {
@@ -44,8 +101,10 @@
         .results-hero h1 {
             font-size: clamp(2rem, 4vw, 2.5rem);
             margin-bottom: 0.5rem;
-            color: #111;
+            color: #ffffff;
+            /* Adjusted for dark animated background */
             font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
         }
 
         .section-underline {
@@ -66,6 +125,8 @@
             border: 2px solid var(--card-border);
             border-radius: 8px;
             padding: 1.5rem 1.8rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            /* Enhanced shadow for the grey box */
         }
 
         .results-card h3 {
@@ -73,7 +134,7 @@
             font-size: 1.2rem;
             color: #222;
         }
-        
+
         .results-card h3.title-green {
             color: var(--title-green);
         }
@@ -89,7 +150,8 @@
 
         .results-card hr {
             border: 0;
-            border-top: 1px solid #aaa;
+            border-top: 1px solid #94a3b8;
+            /* Match border grey */
             margin: 1rem 0;
         }
 
@@ -99,17 +161,20 @@
             margin: 4px 0;
             color: #222;
         }
+
         .success-item {
             display: flex;
             align-items: center;
             font-weight: bold;
             margin-bottom: 8px;
         }
+
         .success-item.indent {
             margin-left: 2rem;
             color: #555;
             font-weight: normal;
         }
+
         .star-item {
             display: flex;
             align-items: flex-start;
@@ -126,7 +191,7 @@
             border-radius: 4px;
             border: 1px dashed #888;
             transition: background-color 0.1s ease;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Century Gothic', 'Inter', sans-serif;
         }
 
         .revealable-pw:active {
@@ -150,13 +215,30 @@
         }
 
         /* Dynamic Badge Colors */
-        .badge.rule-based { background: #e74c3c; } 
-        .badge.dictionary { background: #f1c40f; color: #222; } 
-        .badge.brute-force { background: #2ecc71; }
+        .badge.rule-based {
+            background: #e74c3c;
+        }
+
+        .badge.dictionary {
+            background: #f1c40f;
+            color: #222;
+        }
+
+        .badge.brute-force {
+            background: #2ecc71;
+        }
 
         .status-text {
             font-weight: bold;
             color: #555;
+        }
+
+        .status-explanation {
+            font-size: 0.9rem;
+            color: #555555;
+            margin-top: 0.5rem;
+            line-height: 1.5;
+            font-family: 'Century Gothic', 'Inter', sans-serif;
         }
 
         .strategy-list {
@@ -164,27 +246,31 @@
             padding: 0;
             list-style: none;
         }
+
         .strategy-list li {
             margin-bottom: 1rem;
         }
 
         /* Decision Tree Box */
         .diagram-box {
-            background: #ffffff;
-            border: 1px solid #aaa;
+            background: #cbd5e1;
+            /* Darker grey inner box for contrast */
+            border: 1px solid #94a3b8;
             padding: 2rem;
             border-radius: 8px;
             overflow-x: auto;
             margin-bottom: 1.5rem;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            /* Inner shadow for depth */
         }
 
         .subtitle {
             font-size: 0.9rem;
-            color: #666;
+            color: #475569;
             margin-bottom: 1rem;
         }
 
-        /* Tree Styles matching exact single-path logic flowchart */
+        /* Tree Styles */
         .tree ul {
             padding-top: 20px;
             position: relative;
@@ -210,17 +296,36 @@
             position: absolute;
             top: 0;
             left: 50%;
-            border-left: 1px solid #777;
+            border-left: 1px solid #64748b;
+            /* Darker grey line */
             width: 0;
             height: 20px;
         }
 
-        .tree > ul > li::before {
+        .tree>ul>li::before {
             display: none;
         }
 
-        .tree > ul {
+        .tree>ul {
             padding-top: 0;
+        }
+
+        /* New styling for "Yes" and "No" independent boxes */
+        .edge-box {
+            background: #f8fafc;
+            /* Very light grey */
+            border: 1px solid #94a3b8;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #222;
+            margin-top: -10px;
+            /* Pulls box up onto the line */
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .node {
@@ -236,6 +341,8 @@
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.1s ease, max-width 0.2s ease;
             user-select: none;
+            position: relative;
+            /* Required for the absolute meaning box */
         }
 
         .node:hover {
@@ -243,17 +350,62 @@
             transform: scale(1.03);
         }
 
-        /* Styling state when a node box displays its meaning text */
+        /* Node styling when active */
         .node.showing-meaning {
             background-color: var(--tree-node-active-bg);
             border-color: #bfa15f;
-            max-width: 340px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            z-index: 5;
+        }
+
+        /* Floating meaning box positioned to the right */
+        .meaning-box {
+            position: absolute;
+            top: 50%;
+            left: calc(100% + 14px);
+            /* Pushes the box to the right side of the node */
+            transform: translateY(-50%);
+            /* Centers the box vertically relative to the node */
+            background-color: #f8fafc;
+            /* Very light grey for contrast */
+            border: 2px solid #bfa15f;
+            padding: 0.8rem 1.2rem;
+            border-radius: 6px;
+            width: max-content;
+            max-width: 220px;
+            /* Constrains width to prevent overextending */
             font-family: 'Century Gothic', 'Inter', sans-serif;
             font-weight: normal;
             font-size: 0.88rem;
             color: #333;
-            padding: 0.8rem 1.2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            text-align: left;
+            cursor: default;
+            white-space: normal;
+            /* Ensures long text wraps to the next line */
+        }
+
+        /* Arrows updated to point left instead of up */
+        .meaning-box::before,
+        .meaning-box::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            border-style: solid;
+            border-width: 8px;
+        }
+
+        .meaning-box::before {
+            right: 100%;
+            border-color: transparent #bfa15f transparent transparent;
+        }
+
+        .meaning-box::after {
+            right: calc(100% - 2px);
+            /* Offsets the inner white arrow to create the border */
+            border-color: transparent #f8fafc transparent transparent;
         }
 
         /* CART Flow Text Explanation */
@@ -281,27 +433,49 @@
 
         .cart-step p {
             margin: 0;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Century Gothic', 'Inter', sans-serif;
             font-size: 0.9rem;
         }
 
         .cart-separator {
-            border-top: 1px dotted #ccc;
+            border-top: 1px dotted #94a3b8;
+            /* Match grey tone */
             margin: 1rem 0 1rem 1.2rem;
         }
 
-        /* Table */
+        /* ==========================================================================
+           Feature Summary Table Improvements
+           ========================================================================== */
+        .feature-table-wrapper {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #94a3b8;
+            /* Match grey tone */
+            margin: 1rem 0;
+        }
+
         .feature-table {
             width: 100%;
             border-collapse: collapse;
-            background: #ffffff;
+            background: #f1f5f9;
+            /* Light grey table body */
             margin: 0;
         }
 
-        .feature-table th,
-        .feature-table td {
-            border: 1px solid #ccc;
-            padding: 0.7rem 1rem;
+        .feature-table thead {
+            background-color: #1e3a8a;
+            /* Updated to Deep Blue */
+            border-bottom: 2px solid #94a3b8;
+        }
+
+        .feature-table th {
+            color: #ffffff;
+            /* Updated to White */
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.82rem;
+            letter-spacing: 0.05em;
+            padding: 1rem;
             text-align: left;
         }
 
@@ -309,29 +483,136 @@
         .feature-table th:nth-child(2),
         .feature-table td:nth-child(2) {
             text-align: center;
+            width: 160px;
         }
 
-        .feature-table th {
-            background-color: var(--table-header-bg);
-            font-weight: bold;
+        .feature-table td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid #cbd5e1;
+            /* Subtle inner borders */
+            color: #334155;
+            vertical-align: middle;
+            transition: background-color 0.2s ease;
         }
 
-        .feature-table tr.highlight-row {
-            outline: 3px solid var(--blue-highlight);
-            outline-offset: -1px;
+        .feature-table tbody tr:hover td {
+            background-color: #e2e8f0;
+            /* Hover state matches main card bg */
+        }
+
+        .feature-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Styled Value Pill Badges */
+        .feature-val {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.35rem 1rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            min-width: 48px;
+        }
+
+        .feature-val.val-true {
+            background-color: #222222;
+            color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-val.val-false {
+            background-color: #e2e8f0;
+            /* Grey matches card bg */
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+        }
+
+        .feature-val.val-number {
+            background-color: var(--blue-highlight);
+            color: #ffffff;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
         }
 
         .dataset-info {
             font-size: 0.85rem;
-            color: #666;
-            border-top: 1px solid #aaa;
-            padding-top: 0.8rem;
-            margin-top: 1.5rem;
+            color: #475569;
+            padding-top: 0.5rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            /* Vertically align icon and text */
+        }
+
+        /* ==========================================================================
+        Info Tooltip Animation CSS (NEW)
+           ========================================================================== */
+        .info-tooltip-container {
+            display: inline-block;
+            position: relative;
+            margin-left: 6px;
+            cursor: pointer;
+        }
+
+        .info-icon {
+            font-size: 1.1rem;
+            color: var(--blue-highlight);
+            vertical-align: middle;
+            transition: color 0.2s ease;
+        }
+
+        .info-tooltip-container:hover .info-icon {
+            color: #1e3a8a;
+            /* Darker blue on hover */
+        }
+
+        .info-tooltip-content {
+            visibility: hidden;
+            opacity: 0;
+            width: 280px;
+            background-color: #334155;
+            color: #f8fafc;
+            text-align: left;
+            border-radius: 6px;
+            padding: 12px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0.3s;
+            font-size: 0.8rem;
+            font-weight: normal;
+            line-height: 1.4;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Tooltip Arrow pointing down */
+        .info-tooltip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: #334155 transparent transparent transparent;
+        }
+
+        /* The Animation Hover Trigger */
+        .info-tooltip-container:hover .info-tooltip-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
         /* Buttons */
         .results-actions {
-            text-align: center;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
             margin-top: 1rem;
         }
 
@@ -340,28 +621,127 @@
             text-decoration: none;
             padding: 0.8rem 2rem;
             border-radius: 999px;
-            background: #bbb;
+            background: #cbd5e1;
+            /* Matches diagram box grey */
             color: #222;
             font-weight: bold;
             transition: opacity 0.2s ease;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
         }
 
         .secondary-btn:hover {
             opacity: 0.8;
         }
 
+        .reset-btn {
+            background: var(--red-accent);
+            color: #ffffff;
+        }
+
         @media (max-width: 600px) {
-            .results-card { padding: 1rem; }
-            .diagram-box { padding: 1rem; }
+            .results-card {
+                padding: 1rem;
+            }
+
+            .diagram-box {
+                padding: 1rem;
+            }
+
+            .info-tooltip-content {
+                width: 220px;
+                left: auto;
+                right: 0;
+                transform: translateX(0) translateY(10px);
+            }
+
+            .info-tooltip-content::after {
+                left: auto;
+                right: 15px;
+            }
+
+            .info-tooltip-container:hover .info-tooltip-content {
+                transform: translateX(0) translateY(0);
+            }
+        }
+
+        /* ==========================================================================
+        Scroll Reveal Animation CSS
+           ========================================================================== */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform, opacity;
+        }
+
+        .scroll-animate.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ==========================================================================
+        Hide/Reveal Toggle CSS
+           ========================================================================== */
+        .toggle-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            margin-bottom: 0 !important;
+            /* Overrides default h3 margin */
+            transition: opacity 0.2s ease;
+        }
+
+        .toggle-header:hover {
+            opacity: 0.7;
+        }
+
+        .toggle-icon {
+            font-size: 0.8rem;
+            color: #555;
+            transition: transform 0.3s ease;
+        }
+
+        /* When expanded (not collapsed), point arrow up */
+        .toggle-header:not(.collapsed) .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .toggle-content {
+            margin-top: 1.2rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 
 <body class="results-page">
+
+    <!-- Replaced Ripple with Sliding Diagonals -->
+    <div class="bg"></div>
+    <div class="bg bg2"></div>
+    <div class="bg bg3"></div>
+
     <section class="results-page">
         <div class="results-shell">
             <div class="results-hero">
-                <h1>Password Analysis Report</h1>
+                <h1>Password Analysis Results</h1>
             </div>
             <div id="mainContent" class="results-main">
                 <div class="results-card">
@@ -369,26 +749,47 @@
                 </div>
             </div>
             <div class="results-actions">
-                <a href="crack-tester.html" class="secondary-btn" id="testAnotherBtn">← Test Another</a>
+                <a href="comparison.html" class="secondary-btn" id="testAnotherBtn">Test password again?</a>
+                <!-- Updated Reset Test to a functional button -->
+                <button type="button" class="secondary-btn reset-btn" id="resetTestBtn"
+                    onclick="resetPasswordTest()">Reset Test</button>
             </div>
         </div>
     </section>
 
     <script>
+        // Integrated function to cleanly wipe stored data and redirect
+        function resetPasswordTest() {
+            sessionStorage.removeItem('lastAnalysis');
+            sessionStorage.removeItem('analysisHistory');
+            window.location.replace('crack-tester.html');
+        }
+
         // Injects text rendering dynamically into nodes while maintaining structure
         function buildVerticalTreeHTML(node) {
             if (!node) return '';
-            
+
             // Clean subtitle artifacts if any exist dynamically
             const nodeSubtitle = node.subtitle ? `\n${node.subtitle}` : '';
             const fullDisplayLabel = `${node.name}${nodeSubtitle}`;
-            
+
+            let displayName = node.name;
+            let edgeBox = '';
+
+            // Split out 'Yes' or 'No' into its own separate edge box to clean up nodes
+            if (displayName.includes('→')) {
+                const parts = displayName.split('→');
+                edgeBox = `<div class="edge-box">${parts[0].trim()}</div>`;
+                displayName = parts[1].trim();
+            }
+
             let html = `<li>
+                ${edgeBox}
                 <div class="node" onclick="toggleNodeMeaning(this)" data-original="${escapeHtml(fullDisplayLabel)}">
-                    ${node.name}
+                    ${displayName}
                     ${node.subtitle ? `<br><small>${node.subtitle}</small>` : ''}
                 </div>`;
-            
+
             if (node.children && node.children.length > 0) {
                 html += `<ul>`;
                 node.children.forEach(child => {
@@ -396,7 +797,7 @@
                 });
                 html += `</ul>`;
             }
-            
+
             html += `</li>`;
             return html;
         }
@@ -406,73 +807,137 @@
             return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
-        // Toggles context text directly inside the boxes shown in image_c67735.png
+        // Updated function to display the side meaning box
         function toggleNodeMeaning(element) {
-            const originalText = element.getAttribute('data-original');
-            
+            // 1. Check if this node already has the box showing
+            const existingBox = element.querySelector('.meaning-box');
+            if (existingBox) {
+                existingBox.remove();
+                element.classList.remove('showing-meaning');
+                return;
+            }
+
+            // 2. Clear any other currently open boxes to keep the UI clean (optional accordion logic)
+            document.querySelectorAll('.meaning-box').forEach(box => {
+                box.parentElement.classList.remove('showing-meaning');
+                box.remove();
+            });
+
+            // 3. Extract original data properly
+            const originalText = element.getAttribute('data-original') || "";
+
             // Comprehensive definition matrix to fill meaning attributes on the fly
             const meaningMap = {
-                "Dictionary present?": "Checks if the password matches terms found inside standard dictionary wordlists.",
-                "Has leetspeak?": "Detects character substitutions common in human passwords (such as replacing 'a' with '@').",
-                "Common capitalization?": "Identifies predictable validation behavior like altering only the first letter.",
-                "Numeric suffix?": "Checks for trailing numbers added directly onto a baseline token (e.g., '123').",
-                "Symbol affix?": "Looks for punctuation characters attached predictably to strings.",
-                "Length < 12?": "Evaluates whether the asset matches standard length criteria thresholds (< 12 elements).",
-                "Character class count < 3?": "Flags low character structural entropy (utilizing fewer than 3 unique classes).",
-                "Has repetition?": "Checks for repeated character blocks that decrease sequence randomness parameters.",
-                "Has sequence?": "Detects predictable sequential keyboard rows or letters (such as 'abcde' or 'qwert').",
-                "Has digit?": "Identifies basic numeric character inclusions within string features.",
-                "BRUTE-FORCE": "BRUTE-FORCE: Password contains structural variations requiring brute hardware permutations.",
-                "RULE-BASED": "RULE-BASED: Wordlist core present alongside systematic modifications or structural patterns.",
-                "DICTIONARY": "DICTIONARY: Directly references plaintext word arrays with zero mathematical protection.",
-                "Yes → [MATCHED]": "Condition confirmed. Following the execution path downwards into this rule branch.",
-                "No → [NOT MATCHED]": "Condition failed. Bypassing criteria down toward fallback branch verification.",
-                "Yes → [FINAL RESULT]": "Terminal leaf node criteria established. Finalizing classification output.",
-                "No → [FINAL RESULT]": "Terminal leaf node criteria established. Finalizing classification output."
+                "Dictionary present?": "Determines whether the password contains a complete word found in standard dictionary wordlists.",
+                "Has leetspeak?": "Detects common leetspeak substitutions where letters are replaced with visually similar symbols or numbers (e.g., 'a' → '@', 'e' → '3').",
+                "Common capitalization?": "Identifies predictable capitalization patterns, such as capitalizing only the first letter of a word.",
+                "Numeric suffix?": "Checks whether numeric characters are appended to the end of the password, forming a common modification pattern.",
+                "Symbol affix?": "Detects symbols added at the beginning or end of the password in a predictable manner.",
+                "Length < 12?": "Evaluates whether the password length is shorter than the recommended minimum threshold of 12 characters.",
+                "Character class count < 3?": "Determines whether the password uses fewer than three distinct character classes (uppercase, lowercase, digits, or symbols), resulting in lower complexity.",
+                "Has repetition?": "Detects repeated characters or repeated character patterns that reduce password randomness and overall strength.",
+                "Has sequence?": "Identifies predictable sequential patterns, including alphabetical, numerical, or keyboard-based sequences (e.g., 'abc', '123', or 'qwerty').",
+                "Has digit?": "Checks whether the password contains at least one numeric digit as part of its composition.",
+                "BRUTE-FORCE": "BRUTE-FORCE: The password does not match known dictionary or rule-based patterns and would generally require exhaustive brute-force attempts to compromise.",
+                "RULE-BASED": "RULE-BASED: The password is derived from a recognizable dictionary word combined with predictable transformations, such as capitalization, appended numbers, symbols, or character substitutions.",
+                "DICTIONARY": "DICTIONARY: The password directly matches a known dictionary word or commonly used plaintext term without meaningful structural modifications.",
+                "Yes → [MATCHED]": "The condition is satisfied. The decision process follows the corresponding branch for further evaluation.",
+                "No → [NOT MATCHED]": "The condition is not satisfied. The evaluation proceeds to the alternative decision branch.",
+                "Yes → [FINAL RESULT]": "A terminal decision node has been reached. The final password classification is determined.",
+                "No → [FINAL RESULT]": "A terminal decision node has been reached. The final password classification is determined."
             };
 
-            // Detect current state
-            if (element.classList.contains('showing-meaning')) {
-                // Return to normal
-                element.classList.remove('showing-meaning');
-                element.innerHTML = originalText.replace(/\n/g, '<br>');
-            } else {
-                // Find matching dictionary entry key matching either name or baseline substring elements
-                let textKey = element.innerText.trim();
-                
-                // Clean substring text mapping arrays if subtitle is bundled
-                if (textKey.includes('\n')) {
-                    textKey = textKey.split('\n')[0].trim();
-                }
+            // Grab only the first line/title to match with keys
+            let textKey = originalText.split('\n')[0].trim();
 
-                // If explicit match exists, map it; otherwise provide context-dependent branch text
-                let meaningText = meaningMap[textKey];
-                
-                if (!meaningText) {
-                    if (textKey.includes("MATCHED")) {
-                        meaningText = "Condition parameters matched, channeling tracking vector further down.";
-                    } else if (textKey.includes("FINAL RESULT")) {
-                        meaningText = "All conditional requirements parsed. Final classification node reached.";
-                    } else {
-                        meaningText = "Decision path calculation marker evaluating credential profile attributes.";
-                    }
-                }
+            let meaningText = meaningMap[textKey];
 
-                // Display meaning inside the box
-                element.classList.add('showing-meaning');
-                element.innerHTML = `💡 ${meaningText}`;
+            if (!meaningText) {
+                if (textKey.includes("MATCHED")) {
+                    meaningText = "Condition parameters matched, channeling tracking vector further down.";
+                } else if (textKey.includes("FINAL RESULT")) {
+                    meaningText = "All conditional requirements parsed. Final classification node reached.";
+                } else {
+                    meaningText = "Decision path calculation marker evaluating credential profile attributes.";
+                }
             }
+
+            // 4. Highlight current node
+            element.classList.add('showing-meaning');
+
+            // 5. Build and inject the floating box
+            const meaningDiv = document.createElement('div');
+            meaningDiv.className = 'meaning-box';
+            meaningDiv.innerHTML = `💡 <strong>Context:</strong><br>${meaningText}`;
+
+            // Append it to the node
+            element.appendChild(meaningDiv);
+        }
+
+        // Hide/Reveal Toggle Function for main result sections
+        function toggleCard(headerElement) {
+            headerElement.classList.toggle('collapsed');
+            const content = headerElement.nextElementSibling;
+
+            if (headerElement.classList.contains('collapsed')) {
+                content.style.display = 'none';
+            } else {
+                content.style.display = 'block';
+            }
+        }
+
+        // ==========================================================================
+        // NEW Intersection Observer Setup for Staggered Scroll Animations
+        // ==========================================================================
+        function initScrollAnimations() {
+            const cards = document.querySelectorAll('.results-card, .results-actions');
+
+            // If the user's browser doesn't support IntersectionObserver, fail gracefully
+            if (!('IntersectionObserver' in window)) {
+                return;
+            }
+
+            const observerOptions = {
+                root: null, // Default viewport
+                rootMargin: '0px 0px -50px 0px', // Trigger slightly before element is fully in view
+                threshold: 0.1 // Run when 10% of the element is visible
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+
+                        // Strip the transition delay after animation completes to keep interactive transitions (hovers, etc.) snappy
+                        setTimeout(() => {
+                            entry.target.style.transitionDelay = '';
+                        }, 1000);
+
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            cards.forEach((card, index) => {
+                card.classList.add('scroll-animate');
+                // Apply a minor staggered delay based on DOM order so cards load in waves
+                card.style.transitionDelay = `${index * 120}ms`;
+                observer.observe(card);
+            });
         }
 
         function render() {
             const container = document.getElementById('mainContent');
             const currentData = JSON.parse(sessionStorage.getItem('lastAnalysis'));
             let history = JSON.parse(sessionStorage.getItem('analysisHistory') || "[]");
+            const resetBtn = document.getElementById('resetTestBtn');
 
             if (!currentData) {
-                container.innerHTML = "<div class='results-card'>No analysis data found. Please run a test first.</div>";
+                window.location.href = 'crack-tester.html';
                 return;
             }
+
+            if (resetBtn) resetBtn.style.display = 'inline-block';
 
             if (history.length === 0 || history[history.length - 1].password !== currentData.password) {
                 history.push(currentData);
@@ -515,32 +980,36 @@
 
                 comparisonHTML = `
                 <div class="results-card">
-                    <h3 class="title-green">Classification Result</h3>
-                    <div class="bold-text">Previous: ${prevData.vulnerability} (<span class="revealable-pw" data-pw="${prevData.password}" title="Click and hold to reveal">${maskPassword(prevData.password)}</span>)</div>
-                    <div class="bold-text">Current: ${vulnerability} (<span class="revealable-pw" data-pw="${currentData.password}" title="Click and hold to reveal">${maskPassword(currentData.password)}</span>)</div>
-                    <hr class="divider">
-                    <div class="success-item">${comparisonResult}</div>
-                    ${features.length > prevData.features.length ? '<div class="success-item indent">✅ Password length increased.</div>' : ''}
-                    ${features.has_uppercase && !prevData.features.has_uppercase ? '<div class="success-item indent">✅ Added uppercase letters.</div>' : ''}
-                    ${features.has_symbol && !prevData.features.has_symbol ? '<div class="success-item indent">✅ Added symbols.</div>' : ''}
-                    ${features.has_digit && !prevData.features.has_digit ? '<div class="success-item indent">✅ Added numbers.</div>' : ''}
-                    ${!features.dictionary_present && prevData.features.dictionary_present ? '<div class="success-item indent">✅ Reduced dictionary dependency.</div>' : ''}
-                    <hr class="divider">
-                    <div class="star-item">
-                        ${reachedTarget
+                    <h3 class="toggle-header" onclick="toggleCard(this)">Classification Result <span class="toggle-icon">▼</span></h3>
+                    <div class="toggle-content" style="display: block;">
+                        <div class="bold-text">Previous: ${prevData.vulnerability} (<span class="revealable-pw" data-pw="${prevData.password}" title="Click and hold to reveal">${maskPassword(prevData.password)}</span>)</div>
+                        <div class="bold-text">Current: ${vulnerability} (<span class="revealable-pw" data-pw="${currentData.password}" title="Click and hold to reveal">${maskPassword(currentData.password)}</span>)</div>
+                        <hr class="divider">
+                        <div class="success-item">${comparisonResult}</div>
+                        ${features.length > prevData.features.length ? '<div class="success-item indent">✅ Password length increased.</div>' : ''}
+                        ${features.has_uppercase && !prevData.features.has_uppercase ? '<div class="success-item indent">✅ Added uppercase letters.</div>' : ''}
+                        ${features.has_symbol && !prevData.features.has_symbol ? '<div class="success-item indent">✅ Added symbols.</div>' : ''}
+                        ${features.has_digit && !prevData.features.has_digit ? '<div class="success-item indent">✅ Added numbers.</div>' : ''}
+                        ${!features.dictionary_present && prevData.features.dictionary_present ? '<div class="success-item indent">✅ Reduced dictionary dependency.</div>' : ''}
+                        <hr class="divider">
+                        <div class="star-item">
+                            ${reachedTarget
                         ? "⭐ <strong>Target Reached:</strong> Your password is now classified under Complex Brute-Force resistance. This is the recommended stopping point."
-                        : "🔄 Continue improving the password until it reaches strong Brute-Force resistance."}
+                        : "🔄 Continue to improving the password until it reaches Brute-Force resistance."}
+                        </div>
                     </div>
                 </div>
                 `;
             }
 
-            // Connects to the dynamically generated Decision Tree from the server
             const treeData = currentData.visual_decision_tree_trace;
+            const vulnClass = vulnerability ? vulnerability.toLowerCase() : '';
 
+            // Map exact keys as established in original
             const displayKeys = {
                 "length": "Length",
-                "has_lowercase": "Has Lowecase",
+                "character_class_count": "How many Characters are Present",
+                "has_lowercase": "Has Lowercase",
                 "has_uppercase": "Has Uppercase",
                 "has_digit": "Has Digit",
                 "has_symbol": "Has Symbol",
@@ -549,111 +1018,162 @@
                 "numeric_suffix": "Numeric Suffix",
                 "has_sequence": "Has Sequence",
                 "has_repetition": "Has Repetition",
-                "character_class_count": "Character Class Count",
                 "rule_pattern_present": "Rule Pattern Present"
             };
-
             const tableKeys = Object.keys(displayKeys);
-            const vulnClass = vulnerability ? vulnerability.toLowerCase() : '';
 
             container.innerHTML = `
                 ${comparisonHTML}
-
                 <div class="results-card">
-                    <h3>Cracking Strategy Vulnerability Result</h3>
-                    <div class="badge ${vulnClass}">${vulnerability}</div>
-                    <p class="status-text">Status: ${vulnerability === "BRUTE-FORCE" ? "Favorable" : 
-                        vulnerability === "RULE-BASED" ? "Stable" : "Unfavorable"}</p>
+                    <h3 class="toggle-header" onclick="toggleCard(this)">Cracking Strategy Vulnerability Result <span class="toggle-icon">▼</span></h3>
+                    <div class="toggle-content" style="display: block;">
+                        <div class="badge ${vulnClass}">${vulnerability}</div>
+                        <p class="status-text">Status: ${vulnerability === "BRUTE-FORCE" ? "Favorable" :
+                    vulnerability === "RULE-BASED" ? "Stable" : "Unfavorable"}</p>
+
+                        <p class="status-explanation">
+                            ${vulnerability === "BRUTE-FORCE"
+                    ? "Explain: This password has strong resistance and would likely require a time-consuming, character-by-character brute-force attack to crack."
+                    : vulnerability === "RULE-BASED"
+                        ? "Explain: This password has moderate resistance. It relies on a recognizable base word but includes structural patterns or modifications."
+                        : "Explain: This password has very low resistance and is highly susceptible to fast, standard dictionary attacks."}
+                        </p>
+                    </div>
                 </div>
 
                 <div class="results-card">
-                    <h3>Recommendations</h3>
-                    <ul class="strategy-list">
-                        ${(strategies || []).map(s => {
+                    <h3 class="toggle-header collapsed" onclick="toggleCard(this)">Recommendations <span class="toggle-icon">▼</span></h3>
+                    <div class="toggle-content" style="display: none;">
+                        <ul class="strategy-list">
+    ${(strategies || []).map(s => {
                             const raw = currentData.password || "";
                             let formattedStr = s;
-                            
+
                             if (raw) {
                                 const halfLength = Math.ceil(raw.length / 2);
                                 const shuffledSample = raw.substring(halfLength) + raw.substring(0, halfLength);
-                                
-                                const obfuscateTarget = (targetText) => {
-                                    const exactMatch = "'" + targetText + "'";
-                                    const replacementTag = "'<span class=\"revealable-pw\" data-pw=\"" + targetText + "\" title=\"Click and hold to reveal\">" + maskPassword(targetText) + "</span>'";
-                                    formattedStr = formattedStr.split(exactMatch).join(replacementTag);
-                                };
 
-                                obfuscateTarget(raw);
-                                if (shuffledSample !== raw) {
-                                    obfuscateTarget(shuffledSample);
-                                }
+                                const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+                                // Regex to match any single-quoted string containing the input password or its variations
+                                const targets = [raw, shuffledSample].filter(Boolean);
+                                targets.forEach(target => {
+                                    const regex = new RegExp(`'([^']*?${escapeRegex(target)}[^']*?)'`, 'gi');
+                                    formattedStr = formattedStr.replace(regex, (match, p1) => {
+                                        return `'<span class="revealable-pw" data-pw="${p1}" title="Click and hold to reveal">${maskPassword(p1)}</span>'`;
+                                    });
+                                });
                             }
                             return `<li>${formattedStr}</li>`;
                         }).join('')}
-                    </ul>
+</ul>
+                    </div>
                 </div>
 
                 <div class="results-card">
-                    <h3 class="title-green">Decision Tree Path Result & CART Flow</h3>
-                    <p class="subtitle">💡 <strong>Interactive Diagram:</strong> Click directly on any boxed node inside the path diagram below to see what it means, then click it again to return it to normal.</p>
-                    
-                    <div class="diagram-box">
-                        <div class="tree">
-                            <ul>
-                                ${buildVerticalTreeHTML(treeData)}
-                            </ul>
+                    <h3 class="toggle-header collapsed" onclick="toggleCard(this)">Decision Tree Path Result & CART Flow Result <span class="toggle-icon">▼</span></h3>
+            
+                    <div class="toggle-content" style="display: none;">
+                        <p class="subtitle">
+                            💡 <strong>Interactive Diagram:</strong> Click directly on any boxed node inside the path diagram below to see what it means, then click it again to return it to normal.
+                        </p>
+                        <div class="diagram-box">
+                            <div class="tree">
+                                <ul>
+                                    ${buildVerticalTreeHTML(treeData)}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <h4 class="cart-flow-title" style="margin-top: 2rem;">CART Decision Flow</h4>
+                        <div class="diagram-box">
+                            ${(decision_path || []).map((step, index, arr) => `
+                                <div class="cart-step">
+                                    <p>${typeof step === 'string' ? step : (step.rule || step.node || JSON.stringify(step))}</p>
+                                </div>
+                                ${index < arr.length - 1 ? '<div class="cart-separator"></div>' : ''}
+                            `).join('')}
                         </div>
                     </div>
-
-                    <h4 class="cart-flow-title" style="margin-top: 2rem;">CART Decision Flow (Text Explanation)</h4>
-                    <div class="diagram-box">
-                        ${(decision_path || []).map((step, i) => `
-                            <div class="cart-step">
-                                <h5>Node Action ${i+1}</h5>
-                                <p>${step}</p>
-                            </div>
-                            ${i < (decision_path.length - 1) ? '<div class="cart-separator"></div>' : ''}
-                        `).join('')}
-                    </div>
                 </div>
 
                 <div class="results-card">
-                    <h3>Feature Summary Result</h3>
-                    <table class="feature-table">
-                        <thead>
-                            <tr>
-                                <th>Vector</th>
-                                <th>Present - 1, Absent - 0</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${tableKeys.map(key => `
-                                <tr class="${key === 'has_sequence' ? 'highlight-row' : ''}">
-                                    <td>${displayKeys[key]}</td>
-                                    <td>${features && features[key] !== undefined ? features[key] : 0}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                    <h3 class="toggle-header collapsed" onclick="toggleCard(this)">Feature Summary Results <span class="toggle-icon">▼</span></h3>
+                    <div class="toggle-content" style="display: none;">
+                        
+                        <div class="feature-table-wrapper">
+                            <table class="feature-table">
+                                <thead>
+                                    <tr>
+                                        <th>Feature Vector</th>
+                                        <th>Extraction Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                ${tableKeys.map(key => { //Present and Not Present expect for Length and Character Class Count.
+                            const rawVal = features && features[key] !== undefined ? features[key] : 0;
+                            let displayVal = rawVal;
+                            let badgeClass = '';
 
-                    <div class="dataset-info">
-                        Verified against ${dataset_count || 600} training samples.
+                            // Logic: Length and character class count are strictly numeric
+                            if (key === 'length' || key === 'character_class_count') {
+                                displayVal = rawVal;
+                                badgeClass = 'val-number';
+                            } else {
+                                // Logic: All other features display as Present or Not Present
+                                displayVal = rawVal ? 'Present' : 'Not Present';
+                                badgeClass = rawVal ? 'val-true' : 'val-false';
+                            }
+
+                            return `
+        <tr>
+            <td>${displayKeys[key]}</td>
+            <td><span class="feature-val ${badgeClass}">${displayVal}</span></td>
+        </tr>
+    `;
+                        }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="dataset-info">
+                            Verified against ${dataset_count || 600} training samples.
+                            
+                            <!-- NEW HTML added below -->
+                            <div class="info-tooltip-container">
+                                <span class="info-icon">ⓘ</span>
+                                <div class="info-tooltip-content">
+                                    Developed using a supervised training dataset of approximately 600 labeled password instances
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             `;
 
-            // === Event Listeners for Revealable Passwords ===
+            // Re-bind password reveal interactions since elements were just dynamically inserted
             const pwElements = document.querySelectorAll('.revealable-pw');
             pwElements.forEach(el => {
-                const rawPw = el.getAttribute('data-pw');
-                const maskedPw = el.textContent;
+                let holdTimer;
+                const originalText = el.innerText;
+                const realPw = el.getAttribute('data-pw');
 
-                const reveal = () => { el.textContent = rawPw; };
-                const hide = () => { el.textContent = maskedPw; };
+                const reveal = () => { el.textContent = realPw; };
+                const hide = () => { el.textContent = originalText; };
 
-                el.addEventListener('mousedown', reveal);
-                el.addEventListener('mouseup', hide);
-                el.addEventListener('mouseleave', hide);
+                el.addEventListener('mousedown', () => {
+                    holdTimer = setTimeout(reveal, 200);
+                });
+
+                el.addEventListener('mouseup', () => {
+                    clearTimeout(holdTimer);
+                    hide();
+                });
+
+                el.addEventListener('mouseleave', () => {
+                    clearTimeout(holdTimer);
+                    hide();
+                });
 
                 el.addEventListener('touchstart', (e) => {
                     e.preventDefault();
@@ -664,8 +1184,21 @@
             });
         }
 
+        // Initialize the page once the DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+            initScrollAnimations();
+
+            const testAnotherBtn = document.getElementById('testAnotherBtn');
+            if (testAnotherBtn) {
+                testAnotherBtn.addEventListener('click', function () {
+                    sessionStorage.removeItem('lastAnalysis');
+                });
+            }
+        });
+
         // === Clear results on Refresh, Back/Forward Arrow ===
-        window.addEventListener('pageshow', function(event) {
+        window.addEventListener('pageshow', function (event) {
             const isCached = event.persisted;
             const navEntries = performance.getEntriesByType("navigation");
             let isReload = false;
@@ -677,25 +1210,19 @@
             }
 
             if (isReload || isHistoryNav || isCached) {
+                // Completely delete the current password and the history
                 sessionStorage.removeItem('lastAnalysis');
-                render(); 
-            }
-        });
+                sessionStorage.removeItem('analysisHistory');
 
-        document.addEventListener('DOMContentLoaded', () => {
-            render();
-            const testAnotherBtn = document.getElementById('testAnotherBtn');
-            if (testAnotherBtn) {
-                testAnotherBtn.addEventListener('click', function() {
-                    sessionStorage.removeItem('lastAnalysis');
-                });
+                // Immediately redirect to the crack tester without rendering
+                window.location.replace('crack-tester.html');
             }
         });
     </script>
     <script>
-    if (sessionStorage.getItem("privacyConsentGranted") !== "true") {
-        window.location.href = './index.html';
-    }
+        if (sessionStorage.getItem("privacyConsentGranted") !== "true") {
+            window.location.href = './index.html';
+        }
     </script>
 </body>
 
