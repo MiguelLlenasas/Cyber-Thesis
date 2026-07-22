@@ -111,7 +111,7 @@ function extractFeatures(password) {
                 }
             }
         }
-        
+
         if (longestMatchLength === 0) {
             for (let word of tagalogSet) {
                 if (word.length >= 4 && leetNormalized.includes(word)) {
@@ -125,7 +125,7 @@ function extractFeatures(password) {
         // Sinasala ang mga accidental 4-letter matches sa loob ng mahahabang random strings
         if (longestMatchLength >= 4) {
             const wordRatio = longestMatchLength / originalPassword.length;
-            
+
             if (wordRatio >= 0.35 || longestMatchLength >= 6) {
                 dictionaryDetected = 1;
             }
@@ -164,20 +164,20 @@ function extractFeatures(password) {
 
 // ===== 2. PASSWORD CLASSIFICATION =====
 function classifyPassword(extractedFeatures) {
-    
-// Isalpak ito sa pinaka-unahan ng classifyPassword bago mag-ML:
-if (extractedFeatures.dictionary_present && !extractedFeatures.has_digit && !extractedFeatures.has_symbol) {
-    // Kung may uppercase pero dictionary word naman talaga at walang rules, ibig sabihin normal capitalization lang ito ng isang dictionary string
-    if (extractedFeatures.has_uppercase && !extractedFeatures.has_leetspeak && !extractedFeatures.numeric_suffix) {
-        return {
-            label: "DICTIONARY",
-            path: [
-                "A capitalized dictionary word was detected without additional complexity. Passwords that rely only on capitalization are generally easier to predict.",
-                "Prediction handled as the DICTIONARY classification"
-            ]
-        };
+
+    // Isalpak ito sa pinaka-unahan ng classifyPassword bago mag-ML:
+    if (extractedFeatures.dictionary_present && !extractedFeatures.has_digit && !extractedFeatures.has_symbol) {
+        // Kung may uppercase pero dictionary word naman talaga at walang rules, ibig sabihin normal capitalization lang ito ng isang dictionary string
+        if (extractedFeatures.has_uppercase && !extractedFeatures.has_leetspeak && !extractedFeatures.numeric_suffix) {
+            return {
+                label: "DICTIONARY",
+                path: [
+                    "A capitalized dictionary word was detected without additional complexity. Passwords that rely only on capitalization are generally easier to predict.",
+                    "Prediction handled as the DICTIONARY classification"
+                ]
+            };
+        }
     }
-}
 
     // 2. PREPARE FEATURES FOR ML MODEL (Dito na dadaan sina helloWorld at GGwhfjete)
     const modelFeatures = [[
@@ -230,7 +230,7 @@ function getStrategies(vulnerabilityType, extractedFeatures, password) {
         attack_vector: "",
         remediation: ""
     };
-    
+
     const currentPassword = password;
 
     // Base Rules for UI feedback (Dynamic placeholders based on user input)
@@ -247,23 +247,23 @@ function getStrategies(vulnerabilityType, extractedFeatures, password) {
 
     // Dynamic Breakdown base sa Category
     if (vulnerabilityType === "DICTIONARY") {
-        technicalBreakdown.vulnerability_explanation = 
+        technicalBreakdown.vulnerability_explanation =
             `The password '${currentPassword}' consists entirely of a standard dictionary word found in the database without sufficient complexity additions.`;
-        technicalBreakdown.attack_vector = 
+        technicalBreakdown.attack_vector =
             `Highly vulnerable to Standard Dictionary Attacks using pre-compiled wordlists (e.g., RockYou) via automated cracking tools. Cracking time for '${currentPassword}': Less than 1 second.`;
-        technicalBreakdown.remediation = 
+        technicalBreakdown.remediation =
             `Transition from the single word '${currentPassword}' to the 'Passphrase Method' by combining 3 to 4 random, unrelated words.`;
 
         tips.push(`🚨 Critical Warning: Avoid using raw, recognizable words like '${currentPassword}' as your password base.`);
         tips.push(`💡 Recommendation: Transform it into a Passphrase. Instead of '${currentPassword}', use something expanded like '${currentPassword}SapatosKapeHalimaw' to scale up security complexity.`);
-    } 
-    
+    }
+
     else if (vulnerabilityType === "RULE-BASED") {
-        technicalBreakdown.vulnerability_explanation = 
+        technicalBreakdown.vulnerability_explanation =
             `The password '${currentPassword}' relies on a dictionary word foundation but attempts obfuscation using common, predictable human-created rules.`;
-        technicalBreakdown.attack_vector = 
+        technicalBreakdown.attack_vector =
             `Vulnerable to Hybrid/Rule-Based Attacks (e.g., Hashcat rules engine). Modern GPU cracking setups automatically anticipate variations applied to '${currentPassword}' like trailing digits or leetspeak substitutions.`;
-        technicalBreakdown.remediation = 
+        technicalBreakdown.remediation =
             `Disrupt predictable character positioning. Inject symbols and numbers unexpectedly into the middle of the string.`;
 
         if (extractedFeatures.has_leetspeak) {
@@ -276,14 +276,14 @@ function getStrategies(vulnerabilityType, extractedFeatures, password) {
             tips.push(`🔠 Title Case Bias: Capitalizing only the first letter of '${currentPassword}' follows standard linguistic habits. Try scattering uppercase letters dynamically.`);
         }
         tips.push(`💡 Strategy: Implement structural randomization. Instead of your current linear pattern '${currentPassword}', try shuffling or breaking the structure into something like '${shuffledSample}'.`);
-    } 
-    
+    }
+
     else if (vulnerabilityType === "BRUTE-FORCE") {
-        technicalBreakdown.vulnerability_explanation = 
+        technicalBreakdown.vulnerability_explanation =
             `The password '${currentPassword}' shows no reliance on dictionary strings or traditional human habits. Security depends strictly on its combinatorial character space.`;
-        technicalBreakdown.attack_vector = 
+        technicalBreakdown.attack_vector =
             `Targeted by Combinatorial/Exhaustive Brute-Force Attacks, where a computer systematically checks every mathematical combination until it hits '${currentPassword}'.`;
-        technicalBreakdown.remediation = 
+        technicalBreakdown.remediation =
             `Increase overall password length to push the mathematical search space beyond realistic computing capabilities.`;
 
         if (currentPassword.length < 12) {
@@ -319,7 +319,7 @@ function generateVisualTreePath(vulnerabilityType, extractedFeatures, password) 
     const hasSeq = extractedFeatures.has_sequence === 1;
     const hasRep = extractedFeatures.has_repetition === 1;
     const hasDig = extractedFeatures.has_digit === 1;
-    
+
     // Check common capitalization habit (Starts with uppercase followed by lowercase letters)
     const isCommonCap = /^[A-Z][a-z]+/.test(password);
     // Check general symbol affix habits at start/end
@@ -362,37 +362,37 @@ function generateVisualTreePath(vulnerabilityType, extractedFeatures, password) 
     let root = { name: "Dictionary present?", meaning: meanings.dict, children: [] };
 
     if (isDict) {
-        let dictYes = { 
-            name: "Yes → [MATCHED]", 
+        let dictYes = {
+            name: "Yes → [MATCHED]",
             meaning: "The password was successfully verified against a core dictionary file, marking it as an uncomplex wordlist entry.",
-            children: [{ name: "Has leetspeak?", meaning: meanings.leet, children: [] }] 
+            children: [{ name: "Has leetspeak?", meaning: meanings.leet, children: [] }]
         };
         root.children.push(dictYes);
         let leetNode = dictYes.children[0];
 
         if (isLeet) {
-            let leetYes = { 
-                name: "Yes → [MATCHED]", 
+            let leetYes = {
+                name: "Yes → [MATCHED]",
                 meaning: transitionMeanings.matched,
-                children: [{ name: "Common capitalization?", meaning: meanings.cap, children: [] }] 
+                children: [{ name: "Common capitalization?", meaning: meanings.cap, children: [] }]
             };
             leetNode.children.push(leetYes);
             let capNode = leetYes.children[0];
 
             if (isCommonCap) {
-                let capYes = { 
-                    name: "Yes → [MATCHED]", 
+                let capYes = {
+                    name: "Yes → [MATCHED]",
                     meaning: transitionMeanings.matched,
-                    children: [{ name: "Numeric suffix?", meaning: meanings.suffix, children: [] }] 
+                    children: [{ name: "Numeric suffix?", meaning: meanings.suffix, children: [] }]
                 };
                 capNode.children.push(capYes);
                 let suffixNode = capYes.children[0];
 
                 if (isSuffix) {
-                    let suffixYes = { 
-                        name: "Yes → [MATCHED]", 
+                    let suffixYes = {
+                        name: "Yes → [MATCHED]",
                         meaning: transitionMeanings.matched,
-                        children: [{ name: "Symbol affix?", meaning: meanings.affix, children: [] }] 
+                        children: [{ name: "Symbol affix?", meaning: meanings.affix, children: [] }]
                     };
                     suffixNode.children.push(suffixYes);
                     let affixNode = suffixYes.children[0];
@@ -412,26 +412,26 @@ function generateVisualTreePath(vulnerabilityType, extractedFeatures, password) 
             leetNode.children.push({ name: "No → [NOT MATCHED]", meaning: transitionMeanings.notMatched, children: [{ name: "Length < 12?", meaning: meanings.len, children: buildFinal("DICTIONARY", isLenLess) }] });
         }
     } else {
-        let dictNo = { 
-            name: "No → [NOT MATCHED]", 
+        let dictNo = {
+            name: "No → [NOT MATCHED]",
             meaning: "The password bypassed dictionary lookup indexes, advancing the evaluation to structural pattern extraction metrics.",
-            children: [{ name: "Character class count < 3?", meaning: meanings.classes, children: [] }] 
+            children: [{ name: "Character class count < 3?", meaning: meanings.classes, children: [] }]
         };
         root.children.push(dictNo);
         let classNode = dictNo.children[0];
 
         if (extractedFeatures.character_class_count < 3) {
-            classNode.children.push({ 
-                name: "Yes → [MATCHED]", 
-                subtitle: `(Class Count: ${extractedFeatures.character_class_count})`, 
+            classNode.children.push({
+                name: "Yes → [MATCHED]",
+                subtitle: `(Class Count: ${extractedFeatures.character_class_count})`,
                 meaning: `The rule logic matched because the password only uses ${extractedFeatures.character_class_count} character class(es), falling short of full complexity benchmarks.`,
-                children: [{ name: "Has repetition?", meaning: meanings.rep, children: buildFinal("BRUTE-FORCE", hasRep) }] 
+                children: [{ name: "Has repetition?", meaning: meanings.rep, children: buildFinal("BRUTE-FORCE", hasRep) }]
             });
         } else {
-            let classNo = { 
-                name: "No → [NOT MATCHED]", 
+            let classNo = {
+                name: "No → [NOT MATCHED]",
                 meaning: "The password uses 3 or more character classes, successfully avoiding the low character diversity penalty branch.",
-                children: [{ name: "Has sequence?", meaning: meanings.seq, children: [] }] 
+                children: [{ name: "Has sequence?", meaning: meanings.seq, children: [] }]
             };
             classNode.children.push(classNo);
             let seqNode = classNo.children[0];
@@ -443,13 +443,13 @@ function generateVisualTreePath(vulnerabilityType, extractedFeatures, password) 
             }
         }
     }
-    
+
     return root;
 }
 // ===== API ROUTE =====
 app.post('/analyze', (req, res) => {
     const { password } = req.body;
-    
+
     if (!password) {
         return res.status(400).json({ error: "Password is required" });
     }
@@ -458,7 +458,7 @@ app.post('/analyze', (req, res) => {
     console.log("FEATURES:", extractedFeatures);
 
     const classificationResult = classifyPassword(extractedFeatures);
-    
+
     // Kunin ang pormal at realistic strategies at breakdown
     const { tips, technicalBreakdown } = getStrategies(
         classificationResult.label,
@@ -481,25 +481,25 @@ app.post('/analyze', (req, res) => {
 
     // Ipasa ang bagong pinalawak na JSON body response
     res.json({
-    password: password,
-    vulnerability: classificationResult.label,
-    decision_path: classificationResult.path,
-    features: extractedFeatures,
-    
-    // Iwanan lang natin ang live dynamic trace block
-    visual_decision_tree_trace: decisionTreeVisual,
-    
-    analytics_breakdown: {
-        password_length: extractedFeatures.length,
-        character_classes_used: extractedFeatures.character_class_count,
-        estimated_entropy_bits: entropyBits,
-        dictionary_found: extractedFeatures.dictionary_present === 1 ? "Yes" : "No",
-        rule_pattern_active: extractedFeatures.rule_pattern_present === 1 ? "Yes" : "No"
-    },
-    
-    security_assessment: technicalBreakdown,
-    strategies: tips,
-    dataset_count: trainingDataset.length
+        password: password,
+        vulnerability: classificationResult.label,
+        decision_path: classificationResult.path,
+        features: extractedFeatures,
+
+        // Iwanan lang natin ang live dynamic trace block
+        visual_decision_tree_trace: decisionTreeVisual,
+
+        analytics_breakdown: {
+            password_length: extractedFeatures.length,
+            character_classes_used: extractedFeatures.character_class_count,
+            estimated_entropy_bits: entropyBits,
+            dictionary_found: extractedFeatures.dictionary_present === 1 ? "Yes" : "No",
+            rule_pattern_active: extractedFeatures.rule_pattern_present === 1 ? "Yes" : "No"
+        },
+
+        security_assessment: technicalBreakdown,
+        strategies: tips,
+        dataset_count: trainingDataset.length
     });
 });
 

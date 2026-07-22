@@ -2,26 +2,26 @@ const fs = require('fs');
 const path = require('path');
 
 const engData = JSON.parse(
-    fs.readFileSync(
-        path.join(__dirname, 'words_dictionary.json'),
-        'utf-8'
-    )
+  fs.readFileSync(
+    path.join(__dirname, 'words_dictionary.json'),
+    'utf-8'
+  )
 );
 
 const englishWords = Object.keys(engData);
 const tagData = JSON.parse(
-    fs.readFileSync(
-        path.join(__dirname, 'tagalog_dictionary.json'),
-        'utf-8'
-    )
+  fs.readFileSync(
+    path.join(__dirname, 'tagalog_dictionary.json'),
+    'utf-8'
+  )
 );
 
 const tagalogWords = tagData.map(entry => entry.word.toLowerCase());
 
 // ===== COMBINE BOTH =====
 const dictionaryWords = [
-    ...englishWords,
-    ...tagalogWords
+  ...englishWords,
+  ...tagalogWords
 ];
 
 // 🌟 SOLUSYON SA ERROR: Gumawa ng listahan ng mga salitang may length na 8 o pataas
@@ -66,7 +66,7 @@ function buildFeatures(password, label, isDictionary) {
 
   return {
     password_sample: cleanPassword,
-    f_length: cleanPassword.length >= 8 ? 1 : 0, 
+    f_length: cleanPassword.length >= 8 ? 1 : 0,
     f_dict: isDictionary,
     f_leet: hasLeet(cleanPassword),
     f_num: /\d/.test(cleanPassword) ? 1 : 0,
@@ -75,11 +75,11 @@ function buildFeatures(password, label, isDictionary) {
     // 🌟 INAYOS ANG ORDER: Nilagay dito para sumakto sa CSV text formatting mo sa ibaba
     f_numeric_suffix: /\d{2,}$/.test(cleanPassword) ? 1 : 0,
     f_rule_pattern: (
-        hasLeet(cleanPassword) ||
-        /\d{2,}$/.test(cleanPassword) ||
-        hasSequence(cleanPassword)
+      hasLeet(cleanPassword) ||
+      /\d{2,}$/.test(cleanPassword) ||
+      hasSequence(cleanPassword)
     ) ? 1 : 0,
-    label: label 
+    label: label
   };
 }
 
@@ -87,24 +87,24 @@ const rows = [];
 
 // SHORT DICTIONARY
 for (let i = 0; i < 100; i++) {
-    rows.push(
-        buildFeatures(
-            rand(dictionaryWords),
-            "DICTIONARY",
-            1
-        )
-    );
+  rows.push(
+    buildFeatures(
+      rand(dictionaryWords),
+      "DICTIONARY",
+      1
+    )
+  );
 }
 
 // LONG DICTIONARY
 for (let i = 0; i < 100; i++) {
-    rows.push(
-        buildFeatures(
-            rand(longDictionaryWords),
-            "DICTIONARY",
-            1
-        )
-    );
+  rows.push(
+    buildFeatures(
+      rand(longDictionaryWords),
+      "DICTIONARY",
+      1
+    )
+  );
 }
 
 // ===== RULE-BASED =====
